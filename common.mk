@@ -164,6 +164,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.qti.sys.fw.bservice_age=5000 \
     ro.vendor.qti.sys.fw.bservice_limit=10
 
+PRODUCT_PACKAGES += \
+    SamsungDoze
+
 # Filesystem management tools
 PRODUCT_PACKAGES += \
     make_ext4fs \
