@@ -1,4 +1,5 @@
 #include "secril-shim.h"
+#include "secril-sap.h"
 
 #define ATOI_NULL_HANDLED(x) (x ? atoi(x) : 0)
 
@@ -725,11 +726,12 @@ const RIL_RadioFunctions* RIL_Init(const struct RIL_Env *env, int argc, char **a
 		}
 	}
 
-	origRilFunctions = origRilInit(&shimmedEnv, argc, argv);
+	origRilFunctions = origRilInit(GetEnv(&shimmedEnv), argc, argv);
 	if (CC_UNLIKELY(!origRilFunctions)) {
 		RLOGE("%s: the original RIL_Init derped.\n", __FUNCTION__);
 		goto fail_after_dlopen;
 	}
+	SetRadioFunctions(origRilFunctions);
 
 	/* Shim functions as needed. */
 	shimmedFunctions = *origRilFunctions;
