@@ -67,7 +67,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl-legacy \
     camera.device@1.0-impl-legacy \
-    Snap
+    Snap \
+    libstagefright_shim
 
 PRODUCT_PROPERTY_OVERRIDES += \
     media.stagefright.legacyencoder=true \
