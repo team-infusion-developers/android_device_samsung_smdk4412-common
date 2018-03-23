@@ -49,7 +49,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # HIDL
 PRODUCT_PACKAGES += \
-    android.hardware.graphics.allocator@2.0-impl \
+    android.hardware.graphics.allocator@2.0-impl-exynos4 \
     android.hardware.graphics.mapper@2.0-impl \
     vendor.lineage.power@1.0-impl \
     vendor.lineage.power@1.0-service \
