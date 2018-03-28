@@ -23,6 +23,7 @@ lib/egl/libGLESv2_mali.so
 lib/libcec.so
 lib/libddc.so
 lib/libedid.so
+lib/libC.so
 lib/libMali.so
 lib/libMcClient.so
 lib/libMcRegistry.so
