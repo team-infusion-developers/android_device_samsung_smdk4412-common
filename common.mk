@@ -74,7 +74,6 @@ PRODUCT_PACKAGES := \
     android.hardware.bluetooth@1.0-impl \
     libbt-vendor \
     com.android.future.usb.accessory \
-    power.smdk4x12 \
     gralloc.exynos4 \
     GoogleCamera \
     android.hardware.camera.provider@2.4-impl-legacy \
@@ -95,6 +94,11 @@ PRODUCT_PACKAGES := \
     tinymix \
     libstagefright-shim
 
+# SamsungPowerHAL
+PRODUCT_PACKAGES += \
+    android.hardware.power@1.0-service.exynos4
+
+# Usb
 PRODUCT_PACKAGES += \
 	android.hardware.usb@1.0-impl \
 	android.hardware.usb@1.0-service
