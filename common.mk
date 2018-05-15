@@ -1,4 +1,4 @@
-#
+
 # Copyright (C) 2012 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ PRODUCT_COPY_FILES += \
 # Legacy GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl.exynos4 \
-    gps.exynos4
+    gps.smdk4x12
 
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/gps_debug.conf:system/etc/gps_debug.conf \
