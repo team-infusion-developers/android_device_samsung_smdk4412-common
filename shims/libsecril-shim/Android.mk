@@ -20,7 +20,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libbinder
 
 LOCAL_C_INCLUDES += proto
-LOCAL_CFLAGS := -Wall -Werror -DPB_ENABLE_MALLOC -Wno-unused-parameter
+LOCAL_CFLAGS := -Wall -Werror -DPB_ENABLE_MALLOC -Wno-unused-parameter -DPB_FIELD_16BIT
 
 LOCAL_MODULE := libsecril-shim
 
