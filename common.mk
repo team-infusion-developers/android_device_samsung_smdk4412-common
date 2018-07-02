@@ -226,5 +226,8 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-threads=1 \
     dalvik.vm.image-dex2oat-threads=1
 
+# Build with specific settings for Galaxys2-common
+$(call inherit-product, $(LOCAL_PATH)/go_galaxys2-common.mk)
+
 # Include debugging props
 $(call inherit-product, device/samsung/galaxys2-common/system_prop_debug.mk)
