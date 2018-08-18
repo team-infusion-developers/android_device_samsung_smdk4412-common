@@ -97,8 +97,8 @@ PRODUCT_PACKAGES += \
 	android.hardware.usb@1.0-impl \
 	android.hardware.usb@1.0-service
 
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/mediaserver.rc:system/etc/init/mediaserver.rc
+# PRODUCT_COPY_FILES += \
+#    $(LOCAL_PATH)/configs/mediaserver.rc:system/etc/init/mediaserver.rc
 
 # MFC API
 PRODUCT_PACKAGES += \
