@@ -362,6 +362,11 @@ on post-fs-data
     chown dhcp dhcp /data/misc/dhcp
     chown wifi root /dev/rfkill
 
+    # Create the directories used by the Wireless subsystem
+    mkdir /data/vendor/wifi 0770 wifi wifi
+    mkdir /data/vendor/wifi/wpa 0770 wifi wifi
+    mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
+
     # for TRP/TIS
     write /data/.psm.info 1
     chown system root /data/.psm.info
