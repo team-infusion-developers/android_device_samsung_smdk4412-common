@@ -54,6 +54,8 @@ KERNEL_TOOLCHAIN := ./prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-4.8/bin
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := arm-eabi-
 LZMA_RAMDISK_TARGETS := recovery
 
+TARGET_PROCESS_SDK_VERSION_OVERRIDE += \
+    /system/vendor/bin/hw/rild=19
 TARGET_ALLOWS_INVALID_PTHREAD := true
 
 TARGET_LD_SHIM_LIBS := \
