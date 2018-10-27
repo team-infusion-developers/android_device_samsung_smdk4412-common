@@ -221,10 +221,6 @@ $(call inherit-product, hardware/samsung/exynos4x12.mk)
 
 # Include non-opensource parts
 $(call inherit-product, vendor/samsung/smdk4412-common/smdk4412-common-vendor.mk)
-
-# Build GO
-$(call inherit-product, build/make/target/product/go_defaults_512.mk)
-
 # Art
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-threads=1 \
