@@ -43,10 +43,6 @@ PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl.exynos4 \
     gps.smdk4x12
 
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/gps_debug.conf:system/etc/gps_debug.conf \
-    $(COMMON_PATH)/configs/sirfgps.conf:system/etc/sirfgps.conf
-
 # Wifi
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
