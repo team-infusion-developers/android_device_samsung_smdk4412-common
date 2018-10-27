@@ -230,4 +230,4 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 $(call inherit-product, $(LOCAL_PATH)/go_galaxys2-common.mk)
 
 # Include debugging props
-$(call inherit-product, device/samsung/galaxys2-common/system_prop_debug.mk)
+$(call inherit-product, device/samsung/smdk4412-common/system_prop_debug.mk)
