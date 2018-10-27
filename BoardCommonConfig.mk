@@ -115,8 +115,12 @@ BOARD_USES_LEGACY_MMAP := true
 
 # RIL
 BOARD_MOBILEDATA_INTERFACE_NAME := "pdp0"
-
+# RIL
+BOARD_PROVIDES_LIBRIL := true
+BOARD_MODEM_TYPE := xmm6262
 TARGET_SPECIFIC_HEADER_PATH += device/samsung/smdk4412-common/include
+BOARD_GLOBAL_CFLAGS += -DDISABLE_ASHMEM_TRACKING
+BOARD_RIL_CLASS := ../../../device/samsung/i9300/ril
 
 # Wifi
 BOARD_WLAN_DEVICE                := bcmdhd
