@@ -47,6 +47,16 @@ PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=15
 
+# HIDL
+PRODUCT_PACKAGES += \
+    android.hardware.power@1.0-impl \
+    android.hardware.audio@2.0-impl \
+    android.hardware.audio.effect@2.0-impl \
+    android.hardware.keymaster@3.0-impl \
+    android.hardware.bluetooth@1.0-impl \
+    android.hardware.camera.provider@2.4-impl \
+    android.hardware.light@2.0-impl
+
 # Gps
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/gps.conf:system/etc/gps.conf
