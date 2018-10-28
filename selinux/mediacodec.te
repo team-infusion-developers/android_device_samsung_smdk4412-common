@@ -1,4 +1,3 @@
-allow mediacodec mfc_device:chr_file rw_file_perms;
-
-# this should be more specific - /system/lib/omx
-allow mediacodec system_file:dir r_dir_perms;
+allow mediacodec system_file:dir { open read };
+allow mediacodec mfc_device:chr_file { read write open ioctl};
+allow mediacodec sysfs:file { getattr open read };
