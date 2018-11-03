@@ -39,7 +39,7 @@ PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
 
 # Legacy GPS
-PRODUCT_PACKAGES += \
+PRODUCT_PACKAGES := \
     android.hardware.gnss@1.0-impl.exynos4 \
     gps.smdk4x12
 
@@ -88,7 +88,7 @@ PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/gps.conf:system/etc/gps.conf
 
 # Packages
-PRODUCT_PACKAGES := \
+PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.primary.smdk4x12 \
     audio.r_submix.default \
