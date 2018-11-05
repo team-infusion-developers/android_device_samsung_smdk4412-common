@@ -1,4 +1,4 @@
-
+#
 # Copyright (C) 2012 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,13 +39,9 @@ PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
 
 # Legacy GPS
-PRODUCT_PACKAGES := \
-    android.hardware.gnss@1.0-impl.exynos4 \
+PRODUCT_PACKAGES += \
+    android.hardware.gnss@1.0-impl \
     gps.smdk4x12
-
-# Gps
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/gps_debug.conf:system/etc/gps_debug.conf
 
 # Wifi
 PRODUCT_COPY_FILES += \
@@ -56,47 +52,32 @@ PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=15
 
-# HIDL
-PRODUCT_PACKAGES += \
-    android.hardware.graphics.allocator@2.0-impl-exynos4 \
-    android.hardware.graphics.mapper@2.0-impl \
-    vendor.lineage.power@1.0-impl \
-    vendor.lineage.power@1.0-service \
-    android.hardware.audio@2.0-impl \
-    android.hardware.audio.effect@2.0-impl \
-    android.hardware.keymaster@3.0-impl \
-    android.hardware.bluetooth@1.0-impl \
-    android.hardware.light@2.0-impl
-
-#Vibrator
-PRODUCT_PACKAGES += \
-    android.hardware.vibrator@1.0-impl
-
-#Camera
-PRODUCT_PACKAGES += \
-    android.hardware.camera.provider@2.4-impl-legacy \
-    camera.device@1.0-impl-legacy \
-    Snap \
-    libstagefright-shim
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    media.stagefright.legacyencoder=true \
-    media.stagefright.less-secure=true
-
 # Gps
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/gps.conf:system/etc/gps.conf
 
+#    AdvancedDisplay \
+
 # Packages
-PRODUCT_PACKAGES += \
+PRODUCT_PACKAGES := \
+    android.hardware.graphics.allocator@2.0-impl-exynos4 \
+    android.hardware.graphics.mapper@2.0-impl \
+    android.hardware.graphics.composer@2.1-impl \
+    android.hardware.audio@2.0-impl \
+    android.hardware.audio.effect@2.0-impl \
     audio.a2dp.default \
     audio.primary.smdk4x12 \
     audio.r_submix.default \
     audio.usb.default \
-    com.android.future.usb.accessory \
+    android.hardware.keymaster@3.0-impl \
+    android.hardware.light@2.0-impl \
+    android.hardware.bluetooth@1.0-impl \
     libbt-vendor \
+    com.android.future.usb.accessory \
     gralloc.exynos4 \
     hwcomposer.exynos4 \
+    android.hardware.sensors@1.0-impl \
+    android.hardware.gnss@1.0-impl \
     libfimc \
     libfimg \
     libhwconverter \
@@ -108,7 +89,15 @@ PRODUCT_PACKAGES += \
     libUMP \
     lights.smdk4x12 \
     macloader \
-    tinymix
+    tinymix \
+    libstagefright-shim
+
+PRODUCT_PACKAGES += \
+	android.hardware.usb@1.0-impl \
+	android.hardware.usb@1.0-service
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/mediaserver.rc:system/etc/init/mediaserver.rc
 
 # MFC API
 PRODUCT_PACKAGES += \
@@ -155,6 +144,7 @@ PRODUCT_PACKAGES += \
 # Wifi
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service \
+    android.hardware.wifi.supplicant@1.0 \
     wificond \
     libwpa_client \
     hostapd \
@@ -200,7 +190,7 @@ PRODUCT_COPY_FILES += \
 
 # Stylus gestures
 PRODUCT_PACKAGES += \
-    com.cyanogenmod.keyhandler
+    org.lineageos.keyhandler
 
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
