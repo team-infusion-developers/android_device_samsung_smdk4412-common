@@ -16,8 +16,7 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_SRC_FILES := CameraSource.cpp \
-    colorconversion/SoftwareRenderer.cpp
+LOCAL_SRC_FILES := CameraSource.cpp
 
 LOCAL_C_INCLUDES := \
     $(TOP)/frameworks/av/include \
