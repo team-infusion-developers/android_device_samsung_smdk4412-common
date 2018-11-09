@@ -56,13 +56,10 @@ LZMA_RAMDISK_TARGETS := recovery
 
 TARGET_ALLOWS_INVALID_PTHREAD := true
 
-# Bionic
 TARGET_LD_SHIM_LIBS := \
-    /system/vendor/lib/libsec-ril.so|libsamsung_symbols.so
-
-# Bionic
-TARGET_LD_SHIM_LIBS := \
-    /system/lib/libsec-ril.so|libsamsung_symbols.so
+    /system/lib/libbbinder.so|libsamsung_symbols.so \
+    /system/lib/libsec-ril.so|libsamsung_symbols.so \
+    /system/vendor/bin/hw/rild|libsamsung_symbols.so
 
 WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := true
 
