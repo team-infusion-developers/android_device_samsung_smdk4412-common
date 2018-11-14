@@ -57,7 +57,6 @@ LZMA_RAMDISK_TARGETS := recovery
 TARGET_ALLOWS_INVALID_PTHREAD := true
 
 TARGET_LD_SHIM_LIBS := \
-    /system/lib/libbbinder.so|libsamsung_symbols.so \
     /system/lib/libsec-ril.so|libsamsung_symbols.so \
     /system/vendor/bin/hw/rild|libsamsung_symbols.so
 
@@ -100,7 +99,7 @@ BOARD_USE_SYSFS_VSYNC_NOTIFICATION := true
 # Camera
 BOARD_CAMERA_HAVE_ISO := true
 BOARD_CAMERA_MSG_MGMT := true
-TARGET_HAS_LEGACY_CAMERA_HAL1 := true
+#TARGET_HAS_LEGACY_CAMERA_HAL1 := true
 
 # OMX
 BOARD_USE_SAMSUNG_COLORFORMAT := true
