@@ -620,21 +620,6 @@ static void onUnsolicitedResponseShim(int unsolResponse, const void *data, size_
 			if (data != NULL && datalen >= sizeof(RIL_SignalStrength_v5))
 				fixupSignalStrength((void*) data);
 			break;
-		case 11010: /* RIL_UNSOL_AM */
-			ALOGE("%s: RIL_UNSOL_AM: datalen = %d", __func__, datalen);
-			if (data != NULL && datalen != 0) {
-				char *str = (char*) data;
-				ALOGE("%s: RIL_UNSOL_AM: arg = %s", __func__, str);
-			}
-			break;
-		case 11017: /* RIL_UNSOL_WB_AMR_STATE */
-			ALOGE("%s: RIL_UNSOL_WB_AMR_STATE: datalen = %d", __func__, datalen);
-			if (data != NULL && datalen != 0 && (datalen % sizeof(int32_t) == 0)) {
-				int32_t *val = (int32_t*) data;
-				ALOGE("%s: RIL_UNSOL_WB_AMR_STATE: data[0] = %d", __func__, val[0]);
-				val[0] = 1;
-			}
-			break;
 	}
 
 	rilEnv->OnUnsolicitedResponse(unsolResponse, data, datalen);

@@ -63,6 +63,7 @@ void libEvtUnloading(void)
 		 dlclose(realBinderLibHandle);
 }
 
+#if 0
 // some misterious magic happens here
 // and crash of rild doesn't occur if this function is wrapped
 extern "C" int _ZN7android6Parcel12writeAlignedIiEEiT_(int val)
@@ -71,3 +72,4 @@ extern "C" int _ZN7android6Parcel12writeAlignedIiEEiT_(int val)
 
     return fRealWriteAlignedInt(val);
 }
+#endif
