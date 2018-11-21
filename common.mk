@@ -76,6 +76,8 @@ PRODUCT_PACKAGES := \
     com.android.future.usb.accessory \
     gralloc.exynos4 \
     hwcomposer.exynos4 \
+    android.hardware.camera.provider@2.4-impl-legacy \
+    camera.device@1.0-impl-legacy \
     android.hardware.sensors@1.0-impl \
     android.hardware.gnss@1.0-impl \
     libfimc \
