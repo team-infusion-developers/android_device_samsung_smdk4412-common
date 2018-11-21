@@ -18,7 +18,6 @@
 -->
 
 <resources>
-    <!-- Use ZSL mode -->
-    <bool name="enableZSL">true</bool>
-    <bool name="useContinuosFocusForTouch">true</bool>
+    <!-- Allows setting video size before recording starts -->
+    <bool name="needsEarlyVideoSize">true</bool>
 </resources>
