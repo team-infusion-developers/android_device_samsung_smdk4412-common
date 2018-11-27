@@ -16,12 +16,9 @@
 -->
 
 <resources xmlns:xliff="urnasis:names:tc:xliff:document:1.2 ">
-    <!-- Dock Settings -->
-    <bool name="has_dock_settings">true</bool>
-
     <!-- Volume Rocker Wake -->
     <bool name="config_show_volumeRockerWake">true</bool>
 
-    <!-- Does the device allow updating the recovery. -->
-    <bool name="config_enableRecoveryUpdater">false</bool>
+    <!-- Home button wake support -->
+    <bool name="config_show_homeWake">true</bool>
 </resources>
