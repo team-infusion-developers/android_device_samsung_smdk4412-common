@@ -94,10 +94,6 @@ PRODUCT_PACKAGES := \
     tinymix \
     libstagefright-shim
 
-# SamsungPowerHAL
-PRODUCT_PACKAGES += \
-    android.hardware.power@1.0-service.exynos4
-
 # Usb
 PRODUCT_PACKAGES += \
 	android.hardware.usb@1.0-impl \

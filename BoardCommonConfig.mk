@@ -196,7 +196,7 @@ BOARD_CHARGER_SHOW_PERCENTAGE := true
 BUILD_KEYS := release-keys
 
 ifeq ($(BUILD_KEYS),release-keys)
-PRODUCT_DEFAULT_DEV_CERTIFICATE := /home/$(USER)/.android-certs/releasekey
+PRODUCT_DEFAULT_DEV_CERTIFICATE := .android-certs/releasekey
 endif
 
 # inherit from the proprietary version
