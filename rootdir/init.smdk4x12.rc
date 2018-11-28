@@ -432,10 +432,9 @@ on property:ro.uart_debug=0
 on property:wlan.driver.status=unloaded
 	start macloader
 
-service charger /sbin/healthd -c
+service charger /charger
     class charger
     critical
-    seclabel u:r:healthd:s0
 
 service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
