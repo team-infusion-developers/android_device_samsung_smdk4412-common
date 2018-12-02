@@ -62,6 +62,7 @@ TARGET_LD_SHIM_LIBS := \
     /system/lib/libsec-ril.so|libsamsung_symbols.so \
     /system/vendor/bin/hw/rild|libsamsung_symbols.so
 
+WITH_DEXPREOPT := true
 WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := true
 
 # Filesystem
