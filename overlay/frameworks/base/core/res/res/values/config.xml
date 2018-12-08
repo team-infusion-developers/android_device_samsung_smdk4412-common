@@ -209,7 +209,4 @@
 
     <!-- Keep chosen default camera app pinned in memory for faster launching -->
     <bool name="config_pinnerCameraApp">true</bool>
-
-    <!-- Use wakelock for flashlight -->
-    <bool name="config_useWakeLockForFlashlight">true</bool>
 </resources>
