@@ -124,14 +124,6 @@ PRODUCT_COPY_FILES += \
     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
 
-# Memory Optimizations
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.qti.sys.fw.bg_apps_limit=8 \
-    ro.vendor.qti.am.reschedule_service=true \
-    ro.vendor.qti.sys.fw.bservice_enable=true \
-    ro.vendor.qti.sys.fw.bservice_age=5000 \
-    ro.vendor.qti.sys.fw.bservice_limit=5
-
 # Filesystem management tools
 PRODUCT_PACKAGES += \
     make_ext4fs \
