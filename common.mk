@@ -220,6 +220,8 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
+PRODUCT_TAGS += dalvik.gc.type-precise
+
 # Keylayouts
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/excluded-input-devices.xml:system/etc/excluded-input-devices.xml
@@ -239,10 +241,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.bq.gpu_to_cpu_unsupported=1 \
     debug.hwui.render_dirty_regions=false
 
-PRODUCT_TAGS += dalvik.gc.type-precise
-
-$(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
-
 # Include exynos4 platform specific parts
 TARGET_HAL_PATH := hardware/samsung/exynos4/hal
 TARGET_OMX_PATH := hardware/samsung/exynos/multimedia/openmax
@@ -250,6 +248,7 @@ $(call inherit-product, hardware/samsung/exynos4x12.mk)
 
 # Include non-opensource parts
 $(call inherit-product, vendor/samsung/smdk4412-common/smdk4412-common-vendor.mk)
+
 # Art
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-threads=1 \
@@ -257,6 +256,9 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 # Build with specific settings for Galaxys2-common
 $(call inherit-product, $(LOCAL_PATH)/go_galaxys2-common.mk)
+
+# Apply Dalvik config for 1G phone
+$(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
 
 # Include debugging props
 $(call inherit-product, device/samsung/smdk4412-common/system_prop_debug.mk)
