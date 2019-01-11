@@ -117,6 +117,10 @@ PRODUCT_PACKAGES += \
     libOMX.SEC.M4V.Encoder
 #   libOMX.SEC.VP8.Decoder
 
+# Power Management
+PRODUCT_COPY_FILES += \
+    $(COMMON_PATH)/configs/pm_hints.rc:system/etc/init/pm_hints.rc
+
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml \
     $(COMMON_PATH)/configs/media_codecs.xml:system/etc/media_codecs.xml \
