@@ -193,6 +193,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/excluded-input-devices.xml:system/etc/excluded-input-devices.xml
 
+# Prebuilt updater
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/prebuilt/updater:updater
+
 # Stylus gestures
 PRODUCT_PACKAGES += \
     org.lineageos.keyhandler
