@@ -5,11 +5,16 @@ LOCAL_SRC_FILES := \
     CameraWrapper.cpp
 
 LOCAL_SHARED_LIBRARIES := \
-    libhardware liblog libcamera_client libutils libcutils
+        libhardware \
+        liblog \
+        libcamera_metadata \
+        libcutils \
+        liblog \
+        libutils
 
-LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_SHARED_LIBRARIES)/hw
-LOCAL_MODULE := camera.exynos4
+LOCAL_VENDOR_MODULE := true
+LOCAL_MODULE := camera.smdk4x12
 
 LOCAL_MODULE_TAGS := optional
 
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
