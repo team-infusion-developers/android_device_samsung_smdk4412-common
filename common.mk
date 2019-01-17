@@ -74,6 +74,7 @@ PRODUCT_PACKAGES := \
     android.hardware.bluetooth@1.0-impl \
     libbt-vendor \
     com.android.future.usb.accessory \
+    android.hardware.vibrator@1.0-impl \
     gralloc.exynos4 \
     GoogleCamera \
     android.hardware.camera.provider@2.4-impl-legacy \
