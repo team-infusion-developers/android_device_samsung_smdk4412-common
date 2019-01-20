@@ -33,3 +33,7 @@ allow zygote vr_manager_service:service_manager find;
 allow zygote wifi_service:service_manager find;
 allow zygote country_detector_service:service_manager find;
 allow zygote lineage_performance_service:service_manager find;
+allow zygote sysfs_cpuinfo:dir { open read search };
+allow zygote sysfs_cpuinfo:file { getattr open read };
+#allow zygote nfc_service:service_manager add;
+#allow zygote radio_service:service_manager add;

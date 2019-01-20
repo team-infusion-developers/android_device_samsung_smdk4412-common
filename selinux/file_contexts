@@ -43,15 +43,32 @@
 /dev/rfkill                                                      u:object_r:rfkill_device:s0
 /efs/wifi/.mac.info                                              u:object_r:wifi_data_file:s0
 /data/.cid.info                                                  u:object_r:wifi_data_file:s0
+/sys/module/dhd/parameters/firmware_path                         u:object_r:wifi_firmware_file:s0
 
 # Firmwares
 /system/vendor/firmware/mfc_fw.bin                               u:object_r:firmware_mfc:s0
 
 # Display
 /sys/devices/platform/samsung-pd.2/mdnie/mdnie(/.*)?             u:object_r:sysfs_display:s0
+/sys/devices/platform/samsung-pd.2/s3cfb.0(/.*)?                 u:object_r:sysfs_display:s0
 
 # Executables
 /system/bin/macloader                                            u:object_r:macloader_exec:s0
 
 # Vendor
 /(vendor|system/vendor)/bin/hw/android\.hardware\.power@1\.0-service\.exynos4     u:object_r:hal_power_default_exec:s0
+
+# healthd
+/sys/devices/platform/i2c-gpio.17/i2c-17/17-0066/max77693-charger(/.*)?	u:object_r:sysfs_batteryinfo:s0
+/sys/devices/platform/samsung-battery(/.*)?                          u:object_r:sysfs_batteryinfo:s0
+/sys/devices/platform/i2c-gpio.14/i2c-14/14-0036/power_supply(/.*)?	u:object_r:sysfs_batteryinfo:s0
+
+# CPU
+/sys/devices/system/cpu(/.*)?                                    u:object_r:sysfs_cpuinfo:s0
+
+# lmkd
+/sys/module/lowmemorykiller(/.*)?                                u:object_r:sysfs_lmkd:s0
+
+# zram
+/sys/devices/virtual/block/zram0(/.*)?                           u:object_r:sysfs_zram:s0
+
