@@ -75,7 +75,7 @@ PRODUCT_PACKAGES := \
     libbt-vendor \
     com.android.future.usb.accessory \
     gralloc.exynos4 \
-    GoogleCamera \
+    gCam \
     android.hardware.camera.provider@2.4-impl-legacy \
     camera.device@1.0-impl-legacy \
     android.hardware.sensors@1.0-impl \
