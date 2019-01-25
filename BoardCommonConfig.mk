@@ -125,7 +125,6 @@ BOARD_PROVIDES_LIBRIL := true
 BOARD_MODEM_TYPE := xmm6262
 TARGET_SPECIFIC_HEADER_PATH += device/samsung/smdk4412-common/include
 BOARD_RIL_CLASS := ../../../device/samsung/i9300/ril
-TARGET_DISABLE_ASHMEM_TRACKING := true
 
 # Wifi
 BOARD_WLAN_DEVICE                := bcmdhd
