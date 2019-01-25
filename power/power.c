@@ -22,6 +22,8 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
+#include <cutils/properties.h>
+
 #include <stdbool.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -32,7 +34,7 @@
 #include <unistd.h>
 
 // #define LOG_NDEBUG 0
-#define DEBUG 0
+#define DEBUG 1
 #include <log/log.h>
 
 #include "power.h"
@@ -194,7 +196,10 @@ static void set_power_profile(int profile) {
         WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[profile].min_freq);
         WRITE_DYNAMIC_PARAM(profile, up_threshold);
         WRITE_DYNAMIC_PARAM(profile, down_differential);
-        WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);
+
+	if (!property_get_int32("media.player_start", 0))
+	        WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);
+
         WRITE_DYNAMIC_PARAM(profile, cpu_up_rate);
         WRITE_DYNAMIC_PARAM(profile, cpu_down_rate);
         WRITE_DYNAMIC_PARAM(profile, sampling_rate);
@@ -204,13 +209,15 @@ static void set_power_profile(int profile) {
     } else {
         switch (profile) {
             case PROFILE_POWER_SAVE:
-                sysfs_write(GOVERNOR_PATH, GOV_POWERSAVE);
-                ALOGD("%s: activate powersave governor", __func__);
+                sysfs_write(GOVERNOR_PATH, GOV_DYNAMIC);
+                ALOGD("%s: activate dynamic governor", __func__);
                 break;
+#if 0
             case PROFILE_BALANCED:
-                sysfs_write(GOVERNOR_PATH, GOV_ONDEMAND);
-                ALOGD("%s: activate ondemand governor", __func__);
+                sysfs_write(GOVERNOR_PATH, GOV_DYNAMIC);
+                ALOGD("%s: activate dynamic governor", __func__);
                 break;
+#endif
             case PROFILE_PERFORMANCE:
                 sysfs_write(GOVERNOR_PATH, GOV_PERFORMANCE);
                 ALOGD("%s: activate performance governor", __func__);
