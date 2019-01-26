@@ -92,7 +92,8 @@ PRODUCT_PACKAGES := \
     lights.smdk4x12 \
     macloader \
     tinymix \
-    libstagefright-shim
+    libstagefright-shim \
+    libsuspend-shim
 
 # SamsungPowerHAL
 PRODUCT_PACKAGES += \
