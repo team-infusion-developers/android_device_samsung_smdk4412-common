@@ -14,5 +14,6 @@ allow init su_exec:file { execute getattr open read };
 allow init sysfs_lmkd:file setattr;
 allow init sudaemon:process { noatsecure rlimitinh siginh transition };
 #allow init settings_service:service_manager find;
+allow init sysfs_cpufreq:file setattr;
 
 domain_trans(init, rootfs, cpboot-daemon)
