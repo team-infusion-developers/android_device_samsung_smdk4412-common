@@ -74,6 +74,7 @@ PRODUCT_PACKAGES := \
     android.hardware.bluetooth@1.0-impl \
     libbt-vendor \
     com.android.future.usb.accessory \
+    hwcomposer.exynos4 \
     gralloc.exynos4 \
     gCam \
     android.hardware.camera.provider@2.4-impl-legacy \
