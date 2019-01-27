@@ -146,20 +146,20 @@ static int sysfs_write_long(char *path, long value) {
 
 #ifdef LOG_NDEBUG
 #define WRITE_DYNAMIC_PARAM(profile, param) do { \
-    ALOGV("%s: WRITE_DYNAMIC_PARAM(profile=%d, param=%s): new val => %d", __func__, profile, #param, profiles[profile].param); \
+    ALOGE("%s: WRITE_DYNAMIC_PARAM(profile=%d, param=%s): new val => %d", __func__, profile, #param, profiles[profile].param); \
     sysfs_write_int(DYNAMIC_PATH #param, profiles[profile].param); \
 } while (0)
 #define WRITE_LOW_POWER_PARAM(profile, param) do { \
-    ALOGV("%s: WRITE_LOW_POWER_PARAM(profile=%d, param=%s): new val => %d", \
+    ALOGE("%s: WRITE_LOW_POWER_PARAM(profile=%d, param=%s): new val => %d", \
             __func__, profile, #param, profiles_low_power[profile].param); \
     sysfs_write_int(DYNAMIC_PATH #param, profiles_low_power[profile].param); \
 } while (0)
 #define WRITE_DYNAMIC_VALUE(param, value) do { \
-    ALOGV("%s: WRITE_DYNAMIC_VALUE(param=%s, value=%d)", __func__, #param, value); \
+    ALOGE("%s: WRITE_DYNAMIC_VALUE(param=%s, value=%d)", __func__, #param, value); \
     sysfs_write_int(DYNAMIC_PATH #param, value); \
 } while (0)
 #define WRITE_MINMAX_CPU(param, value) do { \
-    ALOGV("%s: WRITE_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
+    ALOGE("%s: WRITE_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
     sysfs_write_int(MINMAX_CPU_PATH #param, value); \
 } while(0)
 #else
@@ -210,23 +210,23 @@ static void set_power_profile(int profile) {
         switch (profile) {
             case PROFILE_POWER_SAVE:
                 sysfs_write(GOVERNOR_PATH, GOV_DYNAMIC);
-                ALOGD("%s: activate dynamic governor", __func__);
+                ALOGE("%s: activate dynamic governor", __func__);
                 break;
 #if 0
             case PROFILE_BALANCED:
                 sysfs_write(GOVERNOR_PATH, GOV_DYNAMIC);
-                ALOGD("%s: activate dynamic governor", __func__);
+                ALOGE("%s: activate dynamic governor", __func__);
                 break;
 #endif
             case PROFILE_PERFORMANCE:
                 sysfs_write(GOVERNOR_PATH, GOV_PERFORMANCE);
-                ALOGD("%s: activate performance governor", __func__);
+                ALOGE("%s: activate performance governor", __func__);
                 break;
         }
     }
     current_power_profile = profile;
 
-    if (DEBUG) ALOGV("%s: %d", __func__, profile);
+    if (DEBUG) ALOGE("%s: %d", __func__, profile);
 }
 
 /*
@@ -236,12 +236,12 @@ static void boost(long boost_time) {
     if (boost_time == -1) {
         sysfs_write_int(DYNAMIC_PATH "boost_lock_time", -1);
 #ifdef LOG_NDEBUG
-        ALOGV("%s: (param=boost_time, value=%d)", __func__, -1);
+        ALOGE("%s: (param=boost_time, value=%d)", __func__, -1);
 #endif
     } else {
         sysfs_write_long(DYNAMIC_PATH "boost_lock_time", boost_time);
 #ifdef LOG_NDEBUG
-        ALOGV("%s: (param=boost_time, value=%ld)", __func__, boost_time);
+        ALOGE("%s: (param=boost_time, value=%ld)", __func__, boost_time);
 #endif
     }
 #endif
@@ -252,7 +252,7 @@ static void end_boost() {
     if (is_vsync_active || !check_governor_dynamic()) return;
     sysfs_write_int(DYNAMIC_PATH "boost_lock_time", 0);
 #ifdef LOG_NDEBUG
-    ALOGV("%s: (param=boost_time, value=%d)", __func__, 0);
+    ALOGE("%s: (param=boost_time, value=%d)", __func__, 0);
 #endif
 #endif
 }
@@ -260,7 +260,7 @@ static void end_boost() {
 
 static void set_power(bool low_power) {
     if (!is_profile_valid(current_power_profile)) {
-        if (DEBUG) ALOGV("%s: current_power_profile not set yet", __func__);
+        if (DEBUG) ALOGE("%s: current_power_profile not set yet", __func__);
         return;
     }
 
@@ -312,7 +312,7 @@ static void set_power(bool low_power) {
  */
 void power_init(void) {
     set_power_profile(PROFILE_BALANCED);
-    if (DEBUG) ALOGV("%s", __func__);
+    if (DEBUG) ALOGE("%s", __func__);
 }
 
 /*
@@ -340,12 +340,12 @@ void power_init(void) {
  */
 void power_set_interactive(int on) {
     if (!is_profile_valid(current_power_profile)) {
-        ALOGD("%s: no power profile selected", __func__);
+        ALOGE("%s: no power profile selected", __func__);
         return;
     }
 
     if (!check_governor_dynamic()) return;
-    if (DEBUG) ALOGV("%s: setting interactive => %d", __func__, on);
+    if (DEBUG) ALOGE("%s: setting interactive => %d", __func__, on);
     set_power(!on);
 }
 
@@ -387,9 +387,10 @@ void power_set_interactive(int on) {
  */
 void power_hint(power_hint_t hint, void *data) {
     //int32_t val;
+    ALOGE("%s: hint: %d, data=%d", __func__, hint, *(int32_t *)data);
 
     if (hint == POWER_HINT_SET_PROFILE) {
-        if (DEBUG) ALOGV("%s: set profile %d", __func__, *(int32_t *)data);
+        if (DEBUG) ALOGE("%s: set profile %d", __func__, *(int32_t *)data);
         if (is_vsync_active) {
             is_vsync_active = false;
             //end_boost();
@@ -404,7 +405,7 @@ void power_hint(power_hint_t hint, void *data) {
         case POWER_HINT_INTERACTION:
 /*
             if (data) {
-                if (DEBUG) ALOGV("%s: interaction", __func__);
+                if (DEBUG) ALOGE("%s: interaction", __func__);
                 val = *(int32_t *)data;
                 if (val > 0) {
                     boost(val * US_TO_NS);
@@ -415,11 +416,11 @@ void power_hint(power_hint_t hint, void *data) {
 */
             break;
         case POWER_HINT_LAUNCH:
-            if (DEBUG) ALOGV("%s: launch", __func__);
+            if (DEBUG) ALOGE("%s: launch", __func__);
             //boost(profiles[current_power_profile].launch_boost_time);
             break;
         case POWER_HINT_CPU_BOOST:
-            if (DEBUG) ALOGV("%s: cpu_boost", __func__);
+            if (DEBUG) ALOGE("%s: cpu_boost", __func__);
             //boost((*(int32_t *)data) * US_TO_NS);
             break;
         default:
