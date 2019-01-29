@@ -35,6 +35,7 @@
 
 // #define LOG_NDEBUG 0
 #define DEBUG 0
+#define VDEBUG 0
 #include <log/log.h>
 
 #include "power.h"
@@ -392,7 +393,7 @@ void power_set_interactive(int on) {
  */
 void power_hint(power_hint_t hint, void *data) {
     //int32_t val;
-    ALOGE("%s: hint: %d, data=%d", __func__, hint, *(int32_t *)data);
+    if (VDEBUG) ALOGE("%s: hint: %d, data=%d", __func__, hint, *(int32_t *)data);
 
     if (hint == POWER_HINT_SET_PROFILE) {
         if (DEBUG) ALOGE("%s: set profile %d", __func__, *(int32_t *)data);
