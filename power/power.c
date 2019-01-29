@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // #define LOG_NDEBUG 0
-#define DEBUG 1
+#define DEBUG 0
 #include <log/log.h>
 
 #include "power.h"
@@ -188,24 +188,29 @@ static void set_power_profile(int profile) {
     if (profile == current_power_profile) return;
 
     if (check_governor_dynamic()) {
-        WRITE_DYNAMIC_PARAM(profile, hotplug_freq_1_1);
+       /* WRITE_DYNAMIC_PARAM(profile, hotplug_freq_1_1);
         WRITE_DYNAMIC_PARAM(profile, hotplug_freq_2_0);
         WRITE_DYNAMIC_PARAM(profile, hotplug_rq_1_1);
-        WRITE_DYNAMIC_PARAM(profile, hotplug_rq_2_0);
+        WRITE_DYNAMIC_PARAM(profile, hotplug_rq_2_0);*/
         WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[profile].max_freq);
         WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[profile].min_freq);
+        WRITE_DYNAMIC_PARAM(profile, power_optimal_freq);
+        WRITE_DYNAMIC_PARAM(profile, max_non_oc_freq);
+        WRITE_DYNAMIC_PARAM(profile, oc_freq_boost_ms);
+        WRITE_DYNAMIC_PARAM(profile, sampling_down_factor);
+        WRITE_DYNAMIC_PARAM(profile, standby_threshold_freq);
         WRITE_DYNAMIC_PARAM(profile, up_threshold);
         WRITE_DYNAMIC_PARAM(profile, down_differential);
 
-	if (!property_get_int32("media.player_start", 0))
-	        WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);
+        /*if (!property_get_int32("media.player_start", 0))
+            WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);*/
 
-        WRITE_DYNAMIC_PARAM(profile, cpu_up_rate);
-        WRITE_DYNAMIC_PARAM(profile, cpu_down_rate);
+        /*WRITE_DYNAMIC_PARAM(profile, cpu_up_rate);
+        WRITE_DYNAMIC_PARAM(profile, cpu_down_rate);*/
         WRITE_DYNAMIC_PARAM(profile, sampling_rate);
         WRITE_DYNAMIC_PARAM(profile, io_is_busy);
         WRITE_DYNAMIC_PARAM(profile, input_boost_freq);
-        WRITE_DYNAMIC_PARAM(profile, boost_mincpus);
+        /*WRITE_DYNAMIC_PARAM(profile, boost_mincpus);*/
     } else {
         switch (profile) {
             case PROFILE_POWER_SAVE:
