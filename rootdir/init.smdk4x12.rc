@@ -448,6 +448,7 @@ on property:wlan.driver.status=unloaded
 service charger /charger
     class charger
     critical
+    seclabel u:r:charger:s0
 
 service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
