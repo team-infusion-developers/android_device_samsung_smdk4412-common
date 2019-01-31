@@ -57,6 +57,8 @@
 
 # Vendor
 /(vendor|system/vendor)/bin/hw/android\.hardware\.power@1\.0-service\.exynos4     u:object_r:hal_power_default_exec:s0
+/(vendor|system/vendor)/lib/hw/gralloc.exynos4.so     u:object_r:system_file:s0
+/(vendor|system/vendor)/lib/hw/hwcomposer.exynos4.so     u:object_r:system_file:s0
 
 # healthd
 /sys/devices/platform/i2c-gpio.17/i2c-17/17-0066/max77693-charger(/.*)?	u:object_r:sysfs_batteryinfo:s0

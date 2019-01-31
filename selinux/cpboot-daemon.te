@@ -21,7 +21,12 @@ allow cpboot-daemon self:capability { setuid };
 allow cpboot-daemon sysfs_radio:file { read write open };
 allow cpboot-daemon usbfs:dir search;
 #allow cpboot-daemon proc_cmdline:file { open read };
-#allow cpboot-daemon self:capability { mknod };
+#allow cpboot-daemon self:capability { dac_override mknod };
+#allow cpboot-daemon default_prop:property_service set;
+
+allow cpboot-daemon cache_block_device:blk_file { open read };
+allow cpboot-daemon sysfs:file { open read write };
+#allow cpboot-daemon system_file:file entrypoint;
 
 # FIX ME
 # allow cpboot-daemon usbfs:filesystem mount;
