@@ -469,6 +469,7 @@ service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
 service macloader /vendor/bin/macloader
     class late_start
     oneshot
+    seclabel u:r:macloader:s0
 
 # Workaround for broken incall audio
 service bootsnd /system/bin/tinyplay /system/etc/sound/silence.wav -D 0 -d 0 -p 880
@@ -476,3 +477,4 @@ service bootsnd /system/bin/tinyplay /system/etc/sound/silence.wav -D 0 -d 0 -p 
     user root
     group audio
     oneshot
+    seclabel u:r:tinyplay:s0

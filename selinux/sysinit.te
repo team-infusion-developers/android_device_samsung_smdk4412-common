@@ -1,0 +1,13 @@
+allow sysinit proc:file { open write };
+allow sysinit swap_block_device:blk_file { open read write };
+allow sysinit sysfs_cpuinfo:dir search;
+allow sysinit sysfs_cpuinfo:file { getattr open read };
+allow sysinit sysfs_lmkd:dir search;
+allow sysinit sysfs_lmkd:file { getattr open setattr write };
+allow sysinit sysfs_zram:dir search;
+allow sysinit sysfs_zram:file { open write };
+allow sysinit self:capability { chown fowner fsetid };
+allow sysinit swap_block_device:blk_file getattr;
+allow sysinit system_data_file:dir { open read };
+#allow sysinit system_data_file:file { getattr open read setattr write };
+allow sysinit vendor_file:dir { open read };

@@ -20,4 +20,4 @@ allow init sysfs:lnk_file setattr;
 allow init audio_device:chr_file { ioctl write };
 #allow init vendor_file:file execute_no_trans;
 
-domain_trans(init, rootfs, cpboot-daemon)
+domain_trans(init, rootfs, cpboot-daemon, macloader, tinyplay)

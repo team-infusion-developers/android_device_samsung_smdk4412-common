@@ -55,6 +55,7 @@
 # Executables
 /system/bin/macloader                                            u:object_r:macloader_exec:s0
 /system/bin/tinyplay                                             u:object_r:tinyplay_exec:s0
+/system/bin/glgps                                                u:object_r:glgps_exec:s0
 
 # Vendor
 /(vendor|system/vendor)/bin/hw/android\.hardware\.power@1\.0-service\.exynos4     u:object_r:hal_power_default_exec:s0
@@ -77,3 +78,9 @@
 # zram
 /sys/devices/virtual/block/zram0(/.*)?                           u:object_r:sysfs_zram:s0
 
+# GPS
+/data/gps/\.gpsd.lock                                            u:object_r:gps_data_file:s0
+/data/gps/glgpsctrl                                              u:object_r:gps_data_file:s0
+/data/gps/\.gps\.interface\.pipe\.to_gpsd                        u:object_r:gps_data_file:s0
+/data/gps/\.gps\.interface\.pipe\.to_jni                         u:object_r:gps_data_file:s0
+/data/gps/gldata\.sto                                            u:object_r:gps_data_file:s0
