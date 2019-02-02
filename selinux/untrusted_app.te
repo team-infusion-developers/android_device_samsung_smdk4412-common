@@ -1,6 +1,18 @@
 #allow untrusted_app proc:file { getattr open read };
 allow untrusted_app sysfs_cpuinfo:dir { open read search };
 allow untrusted_app sysfs_cpuinfo:file { open read };
-#allow untrusted_app system_data_file:dir { add_name create open read remove_name rmdir write };
-#allow untrusted_app system_data_file:file { create ioctl lock open rename setattr unlink write };
+#allow untrusted_app apps_data_file:dir { create };
+allow untrusted_app apps_data_file:dir { add_name open read remove_name rmdir write };
+#allow untrusted_app apps_data_file:file { create unlink };
+allow untrusted_app apps_data_file:file { ioctl lock open rename setattr write };
 #allow untrusted_app unlabeled:file { execute getattr open read };
+
+#============= untrusted_app ==============
+allow untrusted_app apps_data_file:dir { add_name open read remove_name rmdir write };
+allow untrusted_app apps_data_file:file { ioctl lock open rename setattr write };
+
+#============= untrusted_app_25 ==============
+allow untrusted_app_25 sysfs_cpuinfo:dir { open read };
+allow untrusted_app_25 apps_data_file:dir { add_name open read remove_name write };
+allow untrusted_app_25 apps_data_file:file { execute ioctl lock open rename setattr write };
+

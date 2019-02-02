@@ -1,0 +1,49 @@
+#============= init ==============
+allow init kernel:security read_policy;
+allow init sdcardfs:dir write;
+#allow init self:capability sys_ptrace;
+#allow init shell_exec:file execute_no_trans;
+allow init socket_device:sock_file { create setattr };
+#allow init system_file:file execute_no_trans;
+
+#============= installd ==============
+allow installd apps_data_file:dir { getattr open read };
+
+#============= priv_app ==============
+allow priv_app apps_data_file:dir { getattr search };
+#allow priv_app property_socket:sock_file write;
+
+#============= servicemanager ==============
+allow servicemanager radioreset:dir search;
+allow servicemanager radioreset:file { open read };
+allow servicemanager radioreset:process getattr;
+
+#============= sysinit ==============
+allow sysinit selinuxfs:dir read;
+allow sysinit selinuxfs:file { open read };
+allow sysinit apps_data_file:file { getattr open read setattr write };
+
+#============= system_server ==============
+allow system_server apps_data_file:dir { getattr open read };
+allow system_server radioreset:fd use;
+allow system_server radioreset:fifo_file write;
+
+#============= toolbox ==============
+allow toolbox init:fifo_file { ioctl read };
+allow toolbox init:unix_stream_socket { read write };
+
+#============= untrusted_app ==============
+allow untrusted_app apps_data_file:dir { getattr search };
+
+#============= untrusted_app_25 ==============
+allow untrusted_app_25 apps_data_file:dir { getattr search };
+
+#============= vold ==============
+allow vold apps_data_file:dir { getattr setattr };
+
+#============= zygote ==============
+allow zygote apps_data_file:dir { getattr search };
+allow zygote init:fifo_file { read write };
+allow zygote init:unix_stream_socket { accept getattr getopt listen read setopt write };
+#allow zygote system_data_file:file { setattr write };
+#allow zygote zygote_tmpfs:file execute;
