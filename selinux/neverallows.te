@@ -14,7 +14,6 @@ allow cpboot-daemon self:capability { dac_override mknod };
 allow cpboot-daemon system_file:file entrypoint;
 allow cpboot-daemon usbfs:filesystem mount;
 allow glgps system_data_file:file { lock open write };
-allow hal_allocator_default sysfs:file { getattr open read };
 allow hal_power_default default_android_hwservice:hwservice_manager add;
 allow hal_wifi_default system_data_file:file { getattr open read write };
 allow init self:capability sys_ptrace;
@@ -32,10 +31,9 @@ allow rild system_data_file:file { append create getattr ioctl lock open read se
 allow rild system_data_file:file { append create getattr open setattr write };
 allow rild system_data_file:file { getattr ioctl lock open read write };
 allow shell kernel:system syslog_read;
-allow storaged self:capability sys_nice;
+#allow storaged self:capability sys_nice;
 allow sudaemon self:capability { dac_override setgid setuid };
 allow surfaceflinger unlabeled:file { execute getattr open read };
-allow sysinit system_data_file:file { getattr open read setattr write };
 
 #============= installd ==============
 allow installd system_data_file:dir search;
@@ -45,10 +43,6 @@ allow perfprofd system_data_file:dir search;
 
 #============= rild ==============
 allow rild system_data_file:dir search;
-
-#============= sysinit ==============
-allow sysinit block_device:dir search;
-allow sysinit self:capability sys_admin;
 
 #============= tinyplay ==============
 allow tinyplay audio_device:dir search;

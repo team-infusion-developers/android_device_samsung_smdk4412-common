@@ -11,11 +11,6 @@ allow servicemanager radioreset:dir search;
 allow servicemanager radioreset:file { open read };
 allow servicemanager radioreset:process getattr;
 
-#============= sysinit ==============
-allow sysinit selinuxfs:dir read;
-allow sysinit selinuxfs:file { open read };
-allow sysinit system_data_file:file { getattr open read setattr write };
-
 #============= system_server ==============
 allow system_server radioreset:fd use;
 allow system_server radioreset:fifo_file write;
