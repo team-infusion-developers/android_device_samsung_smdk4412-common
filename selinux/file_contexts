@@ -86,6 +86,3 @@
 /data/gps/\.gps\.interface\.pipe\.to_gpsd                        u:object_r:gps_data_file:s0
 /data/gps/\.gps\.interface\.pipe\.to_jni                         u:object_r:gps_data_file:s0
 /data/gps/gldata\.sto                                            u:object_r:gps_data_file:s0
-
-# Apps
-/data/data(/.*)?                                                 u:object_r:apps_data_file:s0

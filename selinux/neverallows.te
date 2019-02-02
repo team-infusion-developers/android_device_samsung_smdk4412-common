@@ -53,21 +53,21 @@ allow untrusted_app_25 sysfs_cpuinfo:dir search;
 allow untrusted_app_25 sysfs_cpuinfo:file { getattr open read };
 allow untrusted_app_25 system_data_file:dir { add_name open read remove_name write };
 allow untrusted_app_25 system_data_file:file { create ioctl lock open rename setattr unlink write };
-allow untrusted_app apps_data_file:dir { create };
-allow untrusted_app apps_data_file:file { create unlink };
+allow untrusted_app system_data_file:dir { create };
+allow untrusted_app system_data_file:file { create unlink };
 allow untrusted_app proc:file { getattr open read };
 allow zygote nfc_service:service_manager add;
 allow zygote radio_service:service_manager add;
 allow zygote system_data_file:file { setattr write };
 
 #============= installd ==============
-allow installd apps_data_file:dir search;
+allow installd system_data_file:dir search;
 
 #============= perfprofd ==============
-allow perfprofd apps_data_file:dir search;
+allow perfprofd system_data_file:dir search;
 
 #============= rild ==============
-allow rild apps_data_file:dir search;
+allow rild system_data_file:dir search;
 
 #============= sysinit ==============
 allow sysinit block_device:dir search;
