@@ -1,0 +1,78 @@
+
+allow adbd default_prop:property_service set;
+allow adbd device:chr_file { open read write };
+allow bluetooth method_trace_data_file:file { execute read unlink };
+allow bootanim unlabeled:file { execute getattr open read };
+allow cameraserver system_data_file:file { open write };
+allow cameraserver unlabeled:file { execute getattr open read };
+allow cpboot-daemon default_prop:property_service set;
+allow cpboot-daemon device:chr_file { create unlink open read write };
+allow cpboot-daemon device:chr_file { open read write };
+#allow cpboot-daemon log_device:chr_file { write open };
+#allow cpboot-daemon log_device:dir search;
+allow cpboot-daemon self:capability { dac_override mknod };
+allow cpboot-daemon system_file:file entrypoint;
+allow cpboot-daemon usbfs:filesystem mount;
+allow glgps system_data_file:file { lock open write };
+allow hal_allocator_default sysfs:file { getattr open read };
+allow hal_power_default default_android_hwservice:hwservice_manager add;
+allow hal_wifi_default system_data_file:file { getattr open read write };
+allow init self:capability sys_ptrace;
+allow init settings_service:service_manager find;
+allow init shell_exec:file execute_no_trans;
+allow init system_file:file execute_no_trans;
+allow init vendor_file:file execute_no_trans;
+allow macloader vendor_file:file entrypoint;
+allow priv_app ffs_prop:property_service set;
+allow priv_app init:unix_stream_socket connectto;
+allow priv_app mtp_device:chr_file ioctl;
+allow priv_app property_socket:sock_file write;
+allow priv_app system_data_file:file { ioctl lock open setattr write };
+allow radio method_trace_data_file:file { execute read unlink };
+allow radio method_trace_data_file:file { read unlink };
+allow radioreset self:capability sys_nice;
+allow radioreset settings_service:service_manager find;
+allow radioreset system_file:file execute_no_trans;
+allow rild system_data_file:file { append create getattr ioctl lock open read setattr write };
+allow rild system_data_file:file { append create getattr open setattr write };
+allow rild system_data_file:file { getattr ioctl lock open read write };
+allow shell kernel:system syslog_read;
+allow storaged self:capability sys_nice;
+allow sudaemon self:capability { dac_override setgid setuid };
+allow surfaceflinger unlabeled:file { execute getattr open read };
+allow sysinit system_data_file:file { getattr open read setattr write };
+allow system_app method_trace_data_file:file { execute read unlink };
+allow system_server dalvikcache_data_file:file execute;
+allow system_server default_android_hwservice:hwservice_manager find;
+allow system_server default_android_service:service_manager { find add };
+allow system_server device:chr_file { ioctl open read write };
+allow untrusted_app_25 init:unix_stream_socket connectto;
+allow untrusted_app_25 selinuxfs:dir read;
+allow untrusted_app_25 selinuxfs:file { open read };
+allow untrusted_app_25 sysfs_cpuinfo:dir search;
+allow untrusted_app_25 sysfs_cpuinfo:file { getattr open read };
+allow untrusted_app_25 system_data_file:dir { add_name open read remove_name write };
+allow untrusted_app_25 system_data_file:file { create ioctl lock open rename setattr unlink write };
+allow untrusted_app apps_data_file:dir { create };
+allow untrusted_app apps_data_file:file { create unlink };
+allow untrusted_app proc:file { getattr open read };
+allow zygote nfc_service:service_manager add;
+allow zygote radio_service:service_manager add;
+allow zygote system_data_file:file { setattr write };
+
+#============= installd ==============
+allow installd apps_data_file:dir search;
+
+#============= perfprofd ==============
+allow perfprofd apps_data_file:dir search;
+
+#============= rild ==============
+allow rild apps_data_file:dir search;
+
+#============= sysinit ==============
+allow sysinit block_device:dir search;
+allow sysinit self:capability sys_admin;
+
+#============= tinyplay ==============
+allow tinyplay audio_device:dir search;
+

@@ -179,6 +179,8 @@ GREEN_LED_PATH := /sys/class/leds/led_g/brightness
 BLUE_LED_PATH := /sys/class/leds/led_b/brightness
 BACKLIGHT_PATH := /sys/class/backlight/panel/brightness
 
+SELINUX_IGNORE_NEVERALLOWS := true
+
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
 
