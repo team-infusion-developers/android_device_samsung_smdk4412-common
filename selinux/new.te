@@ -47,3 +47,22 @@ allow zygote init:fifo_file { read write };
 allow zygote init:unix_stream_socket { accept getattr getopt listen read setopt write };
 #allow zygote system_data_file:file { setattr write };
 #allow zygote zygote_tmpfs:file execute;
+
+
+
+
+
+#============= init ==============
+allow init app_data_file:dir { getattr search };
+allow init app_data_file:file { getattr open read };
+
+#============= installd ==============
+allow installd apps_data_file:dir { add_name remove_name setattr write };
+allow installd apps_data_file:file getattr;
+allow installd apps_data_file:lnk_file { create getattr unlink };
+
+#============= rild ==============
+allow rild apps_data_file:file { getattr ioctl lock open read write };
+
+#============= zygote ==============
+allow zygote apps_data_file:file { getattr open read };
