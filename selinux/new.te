@@ -6,13 +6,6 @@ allow init sdcardfs:dir write;
 allow init socket_device:sock_file { create setattr };
 #allow init system_file:file execute_no_trans;
 
-#============= installd ==============
-allow installd system_data_file:dir { getattr open read };
-
-#============= priv_app ==============
-allow priv_app system_data_file:dir { getattr search };
-#allow priv_app property_socket:sock_file write;
-
 #============= servicemanager ==============
 allow servicemanager radioreset:dir search;
 allow servicemanager radioreset:file { open read };
@@ -24,45 +17,9 @@ allow sysinit selinuxfs:file { open read };
 allow sysinit system_data_file:file { getattr open read setattr write };
 
 #============= system_server ==============
-allow system_server system_data_file:dir { getattr open read };
 allow system_server radioreset:fd use;
 allow system_server radioreset:fifo_file write;
 
 #============= toolbox ==============
 allow toolbox init:fifo_file { ioctl read };
 allow toolbox init:unix_stream_socket { read write };
-
-#============= untrusted_app ==============
-allow untrusted_app system_data_file:dir { getattr search };
-
-#============= untrusted_app_25 ==============
-allow untrusted_app_25 system_data_file:dir { getattr search };
-
-#============= vold ==============
-allow vold system_data_file:dir { getattr setattr };
-
-#============= zygote ==============
-allow zygote system_data_file:dir { getattr search };
-allow zygote init:fifo_file { read write };
-allow zygote init:unix_stream_socket { accept getattr getopt listen read setopt write };
-#allow zygote system_data_file:file { setattr write };
-#allow zygote zygote_tmpfs:file execute;
-
-
-
-
-
-#============= init ==============
-allow init app_data_file:dir { getattr search };
-allow init app_data_file:file { getattr open read };
-
-#============= installd ==============
-allow installd system_data_file:dir { add_name remove_name setattr write };
-allow installd system_data_file:file getattr;
-allow installd system_data_file:lnk_file { create getattr unlink };
-
-#============= rild ==============
-allow rild system_data_file:file { getattr ioctl lock open read write };
-
-#============= zygote ==============
-allow zygote system_data_file:file { getattr open read };
