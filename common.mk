@@ -26,7 +26,8 @@ PRODUCT_COPY_FILES := \
     $(COMMON_PATH)/rootdir/init.smdk4x12.usb.rc:root/init.smdk4x12.usb.rc \
     $(COMMON_PATH)/rootdir/init.trace.rc:root/init.trace.rc \
     $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:root/ueventd.smdk4x12.rc \
-    $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc
+    $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc \
+    $(COMMON_PATH)/rootdir/mount_bind.sh:root/sbin/mount_bind.sh
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -96,6 +97,7 @@ PRODUCT_PACKAGES := \
     tinymix \
     libstagefright-shim \
     libsuspend-shim \
+    libui-shim \
     libdl-shim
 
 # SamsungPowerHAL
