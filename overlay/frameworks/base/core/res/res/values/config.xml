@@ -59,7 +59,7 @@
     <!-- Screen brightness used to dim the screen when the user activity
          timeout expires.  May be less than the minimum allowed brightness setting
          that can be set by the user. -->
-    <integer name="config_screenBrightnessDim">25</integer>
+    <integer name="config_screenBrightnessDim">35</integer>
 
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support.
         The N entries of this array define N + 1 zones as follows:
