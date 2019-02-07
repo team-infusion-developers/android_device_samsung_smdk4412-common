@@ -1,0 +1,19 @@
+cc_library_shared {
+    name: "libEGL-shim",
+    vendor: true,
+    defaults: ["egl_libs_defaults"],
+    cflags: [
+        "-DLOG_TAG=\"libEGL\"",
+    ],
+    srcs: [
+        "eglApi.cpp",
+    ],
+    shared_libs: [
+        "libEGL",
+    ],
+
+    include_dirs: [
+        "frameworks/native/opengl/libs/EGL",
+        "frameworks/native/opengl/libs/EGL/include",
+    ],
+}

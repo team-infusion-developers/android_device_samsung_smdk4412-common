@@ -103,6 +103,7 @@ PRODUCT_PACKAGES += \
     libstagefright-shim \
     libsuspend-shim \
     libui-shim \
+    libEGL-shim \
     libdl-shim
 
 # SamsungPowerHAL
