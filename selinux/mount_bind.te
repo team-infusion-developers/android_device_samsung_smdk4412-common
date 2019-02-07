@@ -1,6 +1,0 @@
-type mount_bind, domain;
-type mount_bind_exec, exec_type, file_type;
-
-permissive mount_bind;
-
-init_daemon_domain(mount_bind);

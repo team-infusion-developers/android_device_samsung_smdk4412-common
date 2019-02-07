@@ -20,7 +20,6 @@ on fs
 
     mkdir /preload
     mount_all /fstab.smdk4x12
-    start mount_bind
 
     chown radio system /efs
     chmod 0771 /efs
@@ -494,9 +493,3 @@ service bootsnd /system/bin/tinyplay /system/etc/sound/silence.wav -D 0 -d 0 -p 
     group audio
     oneshot
     seclabel u:r:tinyplay:s0
-
-service mount_bind /system/bin/sh /sbin/mount_bind.sh
-    class main
-    oneshot
-    disabled
-    seclabel u:r:mount_bind:s0
