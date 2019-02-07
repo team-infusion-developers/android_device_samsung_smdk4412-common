@@ -1,6 +1,5 @@
 subdirs = [
     "libsuspend-shim",
     "libui-shim",
-    "libEGL-shim",
 ]
 

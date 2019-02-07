@@ -57,7 +57,6 @@ LZMA_RAMDISK_TARGETS := recovery
 TARGET_ALLOWS_INVALID_PTHREAD := true
 
 TARGET_LD_SHIM_LIBS := \
-    /system/lib/libEGL.so|libEGL-shim.so \
     /system/lib/libsuspend.so|libsuspend-shim.so \
     /system/lib/libandroid_servers.so|libsuspend-shim.so \
     /system/lib/libsec-ril.so|libsamsung_symbols.so \
