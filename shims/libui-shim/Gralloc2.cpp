@@ -237,7 +237,7 @@ std::string Allocator::dumpDebugInfo() const
     return debugInfo;
 }
 
-Error Allocator::allocate(BufferDescriptor descriptor, uint32_t /*count*/,
+Error Allocator::allocate(BufferDescriptor descriptor, uint32_t count,
         uint32_t* outStride, buffer_handle_t* outBufferHandles) const
 {
     Error error;
@@ -256,9 +256,51 @@ Error Allocator::allocate(BufferDescriptor descriptor, uint32_t /*count*/,
     err = mAllocDev->alloc(mAllocDev, static_cast<int>(info.width),
             static_cast<int>(info.height), static_cast<int>(info.format), static_cast<int>(usage), outBufferHandles,
             &stride);
+
+    std::vector<hardware::hidl_handle> buffers;
+    error = Error::NONE;
+
+    if (err) {
+        switch (err) {
+            case -EINVAL:
+                error = Error::BAD_VALUE; break;
+            default:
+                error = Error::NO_RESOURCES;
+        }
+    }
+
+    if (error == Error::NONE) {
+        buffers.reserve(count);
+        buffers.emplace_back(static_cast<hardware::hidl_handle>(outBufferHandles[0]));
+    }
+
+    // return the buffers
+    hardware::hidl_vec<hardware::hidl_handle> hidl_buffers;
+    if (error == Error::NONE) {
+        hidl_buffers.setToExternal(buffers.data(), buffers.size());
+    }
+
+    [&](const auto& tmpError, const auto& tmpStride,
+                const auto& tmpBuffers) {
+                error = tmpError;
+                if (tmpError != Error::NONE) {
+                    return;
+                }
+
+               //*outBufferHandles = tmpBuffers[0];
+               mMapper.importBuffer(tmpBuffers[0],
+                            &outBufferHandles[0]);
+    }
+    (error, static_cast<uint32_t>(stride), hidl_buffers);
+
+    // free the buffers
+    for (const auto& buffer : buffers) {
+        mAllocDev->free(mAllocDev, buffer.getNativeHandle());
+    }
+
     *outStride = static_cast<uint32_t>(stride);
-    mMapper.importBuffer(outBufferHandles[0],
-                        &outBufferHandles[0]);
+    //mMapper.importBuffer(outBufferHandles[0],
+    //                    &outBufferHandles[0]);
 
     ALOGW_IF(err, "alloc(%u, %u, %d, %llx, ...) failed %d (%s)",
             info.width, info.height, info.format, info.usage, err, strerror(-err));
