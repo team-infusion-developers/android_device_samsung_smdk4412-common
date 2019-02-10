@@ -20,6 +20,7 @@ cc_library_shared {
     clang: true,
     cppflags: [
         "-Weverything",
+        "-Werror",
 
         // The static constructors and destructors in this library have not been noted to
         // introduce significant overheads
@@ -50,10 +51,10 @@ cc_library_shared {
         "ui/Fence.cpp",
         "ui/FenceTime.cpp",
         "ui/FrameStats.cpp",
-        "Gralloc2.cpp",
-        "ui/GraphicBuffer.cpp",
-        "ui/GraphicBufferAllocator.cpp",
-        "ui/GraphicBufferMapper.cpp",
+        "ui/Gralloc2.cpp",
+        "GraphicBuffer.cpp",
+        "GraphicBufferAllocator.cpp",
+        "GraphicBufferMapper.cpp",
         "ui/HdrCapabilities.cpp",
         "ui/PixelFormat.cpp",
         "ui/Rect.cpp",
@@ -62,7 +63,6 @@ cc_library_shared {
     ],
 
     include_dirs: [
-        "hardware/interfaces/graphics/mapper/2.0/default",
         "device/samsung/smdk4412-common/shims/libui-shim/include",
         "frameworks/native/include",
     ],
