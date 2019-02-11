@@ -59,6 +59,14 @@
 /system/bin/glgps                                                u:object_r:glgps_exec:s0
 /system/bin/restart_rild.sh                                      u:object_r:radioreset_exec:s0
 
+/dev/exynos-mem							 u:object_r:video_device:s0
+/data/ISP_CV							 u:object_r:camera_data_file:s0
+
+# Firmware
+/system/vendor/firmware(/.*)?					 u:object_r:firmware_exynos:s0
+/system/vendor/firwmare/mfc_fw.bin				 u:object_r:firmware_mfc:s0
+/data/cfw(/.*)?							 u:object_r:firmware_exynos:s0
+
 # Vendor
 /(vendor|system/vendor)/bin/hw/android\.hardware\.power@1\.0-service\.exynos4     u:object_r:hal_power_default_exec:s0
 /(vendor|system/vendor)/lib/hw/gralloc.exynos4.so     u:object_r:system_file:s0
