@@ -1,3 +1,0 @@
-# Android fstab file.
-# <src>						<mnt_point>		<type>		<mnt_flags and options>		<fs_mgr_flags>
-/system/vendor/bin/Linker		/system/bin/linker	auto		bind				wait
