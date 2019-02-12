@@ -17,10 +17,14 @@
 
 #define GOV_PERFORMANCE      "performance"
 #define GOV_ONDEMAND         "ondemand"
-#define GOV_DYNAMIC         "dynamic"
+#define GOV_PEGASUSQ         "pegasusq"
 #define GOV_POWERSAVE        "conservative"
 
 #define MS_TO_NS (1000000L)
+
+// Custom Lineage hints
+const static power_hint_t POWER_HINT_CPU_BOOST   = (power_hint_t)0x00000110;
+const static power_hint_t POWER_HINT_SET_PROFILE = (power_hint_t)0x00000111;
 
 enum {
     PROFILE_POWER_SAVE = 0,
@@ -39,24 +43,19 @@ typedef struct governor_settings {
     // max/min freqs (-1 for default)
     int max_freq;
     int min_freq;
-
-    // frequency above which power usage increase is significantly bigger than speed increase
-    int power_optimal_freq;
-    // maximum frequency that you want to consider as normal, long time operating frequency.
-    int max_non_oc_freq;
-    // oc_freq_boost_ms is to prevent some long running CPU intensive tasks from using too much battery
-    int oc_freq_boost_ms;
-    // cpu load must be lower than up_threshold sampling_down_factor times in a row to lower the frequency
-    int sampling_down_factor;
-    // frequency above current policy->min down from which a standby counter starts countdown
-    // (see wiki - https://github.com/mkaluza/project-zen/wiki/Dynamic-governor)
-    int standby_threshold_freq;
     // load at which to start scaling up
     int up_threshold;
+    // load to jump freq immediately to freq_for_responsiveness
+    int up_threshold_at_min_freq;
+    // freq when the load of up_threshold_at_min_freq is reached
+    int freq_for_responsiveness;
+    // percentage of max freq for scaling up or down (1200 * (freq_step/100))
+    int freq_step;
     // higher down_differential == slower downscaling
     int down_differential;
     // min/max num of cpus to have online
     int min_cpu_lock;
+    int max_cpu_lock;
     // wait sampling_rate * cpu_up_rate us before trying to upscale
     int cpu_up_rate;
     // wait sampling_rate * cpu_down_rate us before trying to downscale
@@ -64,7 +63,7 @@ typedef struct governor_settings {
     int sampling_rate; // in microseconds
     int io_is_busy;
     // boosting
-    int input_boost_freq;
+    int boost_freq;
     int boost_mincpus;
     long interaction_boost_time;
     long launch_boost_time;
@@ -78,19 +77,18 @@ static power_profile profiles[PROFILE_MAX] = {
         .hotplug_rq_2_0 = 250,
         .max_freq = 600000,
         .min_freq = -1,
-        .power_optimal_freq = 500000,
-        .max_non_oc_freq = 500000,
-        .oc_freq_boost_ms = 1000,
-        .sampling_down_factor = 1,
-        .standby_threshold_freq = 200000,
-        .up_threshold = 90,
+        .up_threshold = 80,
+        .up_threshold_at_min_freq = 50,
+        .freq_for_responsiveness = 200000,
+        .freq_step = 9,
         .down_differential = 5,
-        .min_cpu_lock = 2,
+        .min_cpu_lock = 0,
+        .max_cpu_lock = 0,
         .cpu_up_rate = 1,
         .cpu_down_rate = 1,
-        .sampling_rate = 30000,
+        .sampling_rate = 20000,
         .io_is_busy = 0,
-        .input_boost_freq = 200000,
+        .boost_freq = 0,
         .boost_mincpus = 0,
         .interaction_boost_time = 0,
         .launch_boost_time = 0,
@@ -100,21 +98,20 @@ static power_profile profiles[PROFILE_MAX] = {
         .hotplug_freq_2_0 = 300000,
         .hotplug_rq_1_1 = 300,
         .hotplug_rq_2_0 = 250,
-        .min_freq = 200000,
+        .min_freq = 100000,
         .max_freq = -1,
-        .power_optimal_freq = 800000,
-        .max_non_oc_freq = 900000,
-        .oc_freq_boost_ms = 2000,
-        .sampling_down_factor = 2,
-        .standby_threshold_freq = 100000,
-        .up_threshold = 85,
+        .up_threshold = 80,
+        .up_threshold_at_min_freq = 50,
+        .freq_for_responsiveness = 200000,
+        .freq_step = 18,
         .down_differential = 5,
-        .min_cpu_lock = 2,
+        .min_cpu_lock = 0,
+        .max_cpu_lock = 0,
         .cpu_up_rate = 1,
         .cpu_down_rate = 1,
         .sampling_rate = 20000,
         .io_is_busy = 1,
-        .input_boost_freq = 200000,
+        .boost_freq = 400000,
         .boost_mincpus = 0,
         .interaction_boost_time = 120 * (MS_TO_NS),
         .launch_boost_time = 2000 * (MS_TO_NS),
@@ -126,19 +123,18 @@ static power_profile profiles[PROFILE_MAX] = {
         .hotplug_rq_2_0 = 250,
         .min_freq = 1400000,
         .max_freq = -1,
-        .power_optimal_freq = 1400000,
-        .max_non_oc_freq = 1400000,
-        .oc_freq_boost_ms = 0,
-        .sampling_down_factor = 3,
-        .standby_threshold_freq = 100000,
+        .freq_step = 37,
         .up_threshold = 80,
+        .up_threshold_at_min_freq = 40,
+        .freq_for_responsiveness = 800000,
         .down_differential = 5,
-        .min_cpu_lock = 4,
+        .min_cpu_lock = 2,
+        .max_cpu_lock = 0,
         .cpu_up_rate = 1,
         .cpu_down_rate = 1,
         .sampling_rate = 20000,
         .io_is_busy = 1,
-        .input_boost_freq = 800000,
+        .boost_freq = 1400000,
         .boost_mincpus = 2,
         .interaction_boost_time = 180 * (MS_TO_NS),
         .launch_boost_time = 2000 * (MS_TO_NS),
@@ -156,13 +152,16 @@ static power_profile profiles_low_power[PROFILE_MAX] = {
         .max_freq = 400000,
         .min_freq = -1,
         .up_threshold = 95,
+        .up_threshold_at_min_freq = 40,
+        .freq_for_responsiveness = 100000,
         .down_differential = 5,
         .min_cpu_lock = 0,
+        .max_cpu_lock = 1,
         .cpu_up_rate = 1,
         .cpu_down_rate = 1,
         .sampling_rate = 20000,
         .io_is_busy = 0,
-        .input_boost_freq = 200000,
+        .boost_freq = 0,
         .boost_mincpus = 0,
         .interaction_boost_time = 0,
         .launch_boost_time = 0,
@@ -175,13 +174,16 @@ static power_profile profiles_low_power[PROFILE_MAX] = {
         .min_freq = 100000,
         .max_freq = -1,
         .up_threshold = 95,
+        .up_threshold_at_min_freq = 50,
+        .freq_for_responsiveness = 200000,
         .down_differential = 5,
         .min_cpu_lock = 0,
+        .max_cpu_lock = 0,
         .cpu_up_rate = 1,
         .cpu_down_rate = 1,
         .sampling_rate = 20000,
         .io_is_busy = 1,
-        .input_boost_freq = 200000,
+        .boost_freq = 1000000,
         .boost_mincpus = 0,
         .interaction_boost_time = 0,
         .launch_boost_time = 0,
@@ -194,13 +196,16 @@ static power_profile profiles_low_power[PROFILE_MAX] = {
         .min_freq = 1400000,
         .max_freq = -1,
         .up_threshold = 95,
+        .up_threshold_at_min_freq = 40,
+        .freq_for_responsiveness = 800000,
         .down_differential = 5,
         .min_cpu_lock = 2,
+        .max_cpu_lock = 0,
         .cpu_up_rate = 1,
         .cpu_down_rate = 1,
         .sampling_rate = 20000,
         .io_is_busy = 1,
-        .input_boost_freq = 200000,
+        .boost_freq = 0,
         .boost_mincpus = 2,
         .interaction_boost_time = 0,
         .launch_boost_time = 0,

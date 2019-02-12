@@ -22,8 +22,6 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
-#include <cutils/properties.h>
-
 #include <stdbool.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -35,13 +33,12 @@
 
 // #define LOG_NDEBUG 0
 #define DEBUG 0
-#define VDEBUG 0
 #include <log/log.h>
 
 #include "power.h"
 
 
-#define DYNAMIC_PATH "/sys/devices/system/cpu/cpufreq/dynamic/"
+#define PEGASUSQ_PATH "/sys/devices/system/cpu/cpufreq/pegasusq/"
 #define MINMAX_CPU_PATH "/sys/power/"
 
 #define US_TO_NS (1000L)
@@ -138,40 +135,39 @@ static int sysfs_write_int(char *path, int value) {
     return sysfs_write_str(path, buf);
 }
 
-/*
 static int sysfs_write_long(char *path, long value) {
     char buf[80];
     snprintf(buf, 80, "%ld", value);
     return sysfs_write_str(path, buf);
-}*/
+}
 
 #ifdef LOG_NDEBUG
-#define WRITE_DYNAMIC_PARAM(profile, param) do { \
-    ALOGE("%s: WRITE_DYNAMIC_PARAM(profile=%d, param=%s): new val => %d", __func__, profile, #param, profiles[profile].param); \
-    sysfs_write_int(DYNAMIC_PATH #param, profiles[profile].param); \
+#define WRITE_PEGASUSQ_PARAM(profile, param) do { \
+    ALOGV("%s: WRITE_PEGASUSQ_PARAM(profile=%d, param=%s): new val => %d", __func__, profile, #param, profiles[profile].param); \
+    sysfs_write_int(PEGASUSQ_PATH #param, profiles[profile].param); \
 } while (0)
 #define WRITE_LOW_POWER_PARAM(profile, param) do { \
-    ALOGE("%s: WRITE_LOW_POWER_PARAM(profile=%d, param=%s): new val => %d", \
+    ALOGV("%s: WRITE_LOW_POWER_PARAM(profile=%d, param=%s): new val => %d", \
             __func__, profile, #param, profiles_low_power[profile].param); \
-    sysfs_write_int(DYNAMIC_PATH #param, profiles_low_power[profile].param); \
+    sysfs_write_int(PEGASUSQ_PATH #param, profiles_low_power[profile].param); \
 } while (0)
-#define WRITE_DYNAMIC_VALUE(param, value) do { \
-    ALOGE("%s: WRITE_DYNAMIC_VALUE(param=%s, value=%d)", __func__, #param, value); \
-    sysfs_write_int(DYNAMIC_PATH #param, value); \
+#define WRITE_PEGASUSQ_VALUE(param, value) do { \
+    ALOGV("%s: WRITE_PEGASUSQ_VALUE(param=%s, value=%d)", __func__, #param, value); \
+    sysfs_write_int(PEGASUSQ_PATH #param, value); \
 } while (0)
 #define WRITE_MINMAX_CPU(param, value) do { \
-    ALOGE("%s: WRITE_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
+    ALOGV("%s: WRITE_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
     sysfs_write_int(MINMAX_CPU_PATH #param, value); \
 } while(0)
 #else
-#define WRITE_DYNAMIC_PARAM(profile, param) sysfs_write_int(DYNAMIC_PATH #param, profiles[profile].param)
-#define WRITE_LOW_POWER_PARAM(profile, param) sysfs_write_int(DYNAMIC_PATH #param, profiles_low_power[profile].param)
-#define WRITE_DYNAMIC_VALUE(param, value)   sysfs_write_int(DYNAMIC_PATH #param, value)
+#define WRITE_PEGASUSQ_PARAM(profile, param) sysfs_write_int(PEGASUSQ_PATH #param, profiles[profile].param)
+#define WRITE_LOW_POWER_PARAM(profile, param) sysfs_write_int(PEGASUSQ_PATH #param, profiles_low_power[profile].param)
+#define WRITE_PEGASUSQ_VALUE(param, value)   sysfs_write_int(PEGASUSQ_PATH #param, value)
 #define WRITE_MINMAX_CPU(param, value) sysfs_write_int(MINMAX_CPU_PATH #param, value)
 #endif
-static bool check_governor_dynamic() {
+static bool check_governor_pegasusq() {
     struct stat s;
-    int err = stat(DYNAMIC_PATH, &s);
+    int err = stat(PEGASUSQ_PATH, &s);
     if (err != 0) return false;
     return S_ISDIR(s.st_mode);
 }
@@ -188,122 +184,122 @@ static void set_power_profile(int profile) {
 
     if (profile == current_power_profile) return;
 
-    if (check_governor_dynamic()) {
-       /* WRITE_DYNAMIC_PARAM(profile, hotplug_freq_1_1);
-        WRITE_DYNAMIC_PARAM(profile, hotplug_freq_2_0);
-        WRITE_DYNAMIC_PARAM(profile, hotplug_rq_1_1);
-        WRITE_DYNAMIC_PARAM(profile, hotplug_rq_2_0);*/
+    if (check_governor_pegasusq()) {
+        WRITE_PEGASUSQ_PARAM(profile, hotplug_freq_1_1);
+        WRITE_PEGASUSQ_PARAM(profile, hotplug_freq_2_0);
+        WRITE_PEGASUSQ_PARAM(profile, hotplug_rq_1_1);
+        WRITE_PEGASUSQ_PARAM(profile, hotplug_rq_2_0);
         WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[profile].max_freq);
         WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[profile].min_freq);
-        WRITE_DYNAMIC_PARAM(profile, power_optimal_freq);
-        WRITE_DYNAMIC_PARAM(profile, max_non_oc_freq);
-        WRITE_DYNAMIC_PARAM(profile, oc_freq_boost_ms);
-        WRITE_DYNAMIC_PARAM(profile, sampling_down_factor);
-        WRITE_DYNAMIC_PARAM(profile, standby_threshold_freq);
-        WRITE_DYNAMIC_PARAM(profile, up_threshold);
-        WRITE_DYNAMIC_PARAM(profile, down_differential);
-
-        /*if (!property_get_int32("media.player_start", 0))
-            WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);*/
-
-        /*WRITE_DYNAMIC_PARAM(profile, cpu_up_rate);
-        WRITE_DYNAMIC_PARAM(profile, cpu_down_rate);*/
-        WRITE_DYNAMIC_PARAM(profile, sampling_rate);
-        WRITE_DYNAMIC_PARAM(profile, io_is_busy);
-        WRITE_DYNAMIC_PARAM(profile, input_boost_freq);
-        /*WRITE_DYNAMIC_PARAM(profile, boost_mincpus);*/
+        WRITE_PEGASUSQ_PARAM(profile, freq_step);
+        WRITE_PEGASUSQ_PARAM(profile, up_threshold);
+        WRITE_PEGASUSQ_PARAM(profile, up_threshold_at_min_freq);
+        WRITE_PEGASUSQ_PARAM(profile, freq_for_responsiveness);
+        WRITE_PEGASUSQ_PARAM(profile, down_differential);
+        WRITE_PEGASUSQ_PARAM(profile, min_cpu_lock);
+        WRITE_PEGASUSQ_PARAM(profile, max_cpu_lock);
+        WRITE_PEGASUSQ_PARAM(profile, cpu_up_rate);
+        WRITE_PEGASUSQ_PARAM(profile, cpu_down_rate);
+        WRITE_PEGASUSQ_PARAM(profile, sampling_rate);
+        WRITE_PEGASUSQ_PARAM(profile, io_is_busy);
+        WRITE_PEGASUSQ_PARAM(profile, boost_freq);
+        WRITE_PEGASUSQ_PARAM(profile, boost_mincpus);
     } else {
         switch (profile) {
             case PROFILE_POWER_SAVE:
-                sysfs_write(GOVERNOR_PATH, GOV_DYNAMIC);
-                ALOGE("%s: activate dynamic governor", __func__);
+                sysfs_write(GOVERNOR_PATH, GOV_POWERSAVE);
+                ALOGD("%s: activate powersave governor", __func__);
                 break;
-#if 0
             case PROFILE_BALANCED:
-                sysfs_write(GOVERNOR_PATH, GOV_DYNAMIC);
-                ALOGE("%s: activate dynamic governor", __func__);
+                sysfs_write(GOVERNOR_PATH, GOV_ONDEMAND);
+                ALOGD("%s: activate ondemand governor", __func__);
                 break;
-#endif
             case PROFILE_PERFORMANCE:
                 sysfs_write(GOVERNOR_PATH, GOV_PERFORMANCE);
-                ALOGE("%s: activate performance governor", __func__);
+                ALOGD("%s: activate performance governor", __func__);
                 break;
         }
     }
     current_power_profile = profile;
 
-    if (DEBUG) ALOGE("%s: %d", __func__, profile);
+    if (DEBUG) ALOGV("%s: %d", __func__, profile);
 }
 
-/*
 static void boost(long boost_time) {
-#ifdef USE_DYNAMIC_BOOSTING
-    if (is_vsync_active || !check_governor_dynamic()) return;
+#ifdef USE_PEGASUSQ_BOOSTING
+    if (is_vsync_active || !check_governor_pegasusq()) return;
     if (boost_time == -1) {
-        sysfs_write_int(DYNAMIC_PATH "boost_lock_time", -1);
+        sysfs_write_int(PEGASUSQ_PATH "boost_lock_time", -1);
 #ifdef LOG_NDEBUG
-        ALOGE("%s: (param=boost_time, value=%d)", __func__, -1);
+        ALOGV("%s: (param=boost_time, value=%d)", __func__, -1);
 #endif
     } else {
-        sysfs_write_long(DYNAMIC_PATH "boost_lock_time", boost_time);
+        sysfs_write_long(PEGASUSQ_PATH "boost_lock_time", boost_time);
 #ifdef LOG_NDEBUG
-        ALOGE("%s: (param=boost_time, value=%ld)", __func__, boost_time);
+        ALOGV("%s: (param=boost_time, value=%ld)", __func__, boost_time);
 #endif
     }
 #endif
 }
 
 static void end_boost() {
-#ifdef USE_DYNAMIC_BOOSTING
-    if (is_vsync_active || !check_governor_dynamic()) return;
-    sysfs_write_int(DYNAMIC_PATH "boost_lock_time", 0);
+#ifdef USE_PEGASUSQ_BOOSTING
+    if (is_vsync_active || !check_governor_pegasusq()) return;
+    sysfs_write_int(PEGASUSQ_PATH "boost_lock_time", 0);
 #ifdef LOG_NDEBUG
-    ALOGE("%s: (param=boost_time, value=%d)", __func__, 0);
+    ALOGV("%s: (param=boost_time, value=%d)", __func__, 0);
 #endif
 #endif
 }
-*/
 
 static void set_power(bool low_power) {
     if (!is_profile_valid(current_power_profile)) {
-        if (DEBUG) ALOGE("%s: current_power_profile not set yet", __func__);
+        if (DEBUG) ALOGV("%s: current_power_profile not set yet", __func__);
         return;
     }
 
-    if (!check_governor_dynamic()) return;
+    if (!check_governor_pegasusq()) return;
 
     if (is_low_power == low_power) return;
 
     if (low_power) {
-        //end_boost();
+        end_boost();
         WRITE_LOW_POWER_PARAM(current_power_profile, hotplug_freq_1_1);
         WRITE_LOW_POWER_PARAM(current_power_profile, hotplug_freq_2_0);
         WRITE_LOW_POWER_PARAM(current_power_profile, hotplug_rq_1_1);
         WRITE_LOW_POWER_PARAM(current_power_profile, hotplug_rq_2_0);
         WRITE_MINMAX_CPU(cpufreq_max_limit, profiles_low_power[current_power_profile].max_freq);
         WRITE_MINMAX_CPU(cpufreq_min_limit, profiles_low_power[current_power_profile].min_freq);
+        WRITE_LOW_POWER_PARAM(current_power_profile, freq_step);
         WRITE_LOW_POWER_PARAM(current_power_profile, up_threshold);
+        WRITE_LOW_POWER_PARAM(current_power_profile, up_threshold_at_min_freq);
+        WRITE_LOW_POWER_PARAM(current_power_profile, freq_for_responsiveness);
         WRITE_LOW_POWER_PARAM(current_power_profile, down_differential);
         WRITE_LOW_POWER_PARAM(current_power_profile, min_cpu_lock);
+        WRITE_LOW_POWER_PARAM(current_power_profile, max_cpu_lock);
         WRITE_LOW_POWER_PARAM(current_power_profile, cpu_down_rate);
         WRITE_LOW_POWER_PARAM(current_power_profile, sampling_rate);
         WRITE_LOW_POWER_PARAM(current_power_profile, io_is_busy);
         is_low_power = true;
     } else {
-        WRITE_DYNAMIC_PARAM(current_power_profile, hotplug_freq_1_1);
-        WRITE_DYNAMIC_PARAM(current_power_profile, hotplug_freq_2_0);
-        WRITE_DYNAMIC_PARAM(current_power_profile, hotplug_rq_1_1);
-        WRITE_DYNAMIC_PARAM(current_power_profile, hotplug_rq_2_0);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, hotplug_freq_1_1);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, hotplug_freq_2_0);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, hotplug_rq_1_1);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, hotplug_rq_2_0);
         WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[current_power_profile].max_freq);
         WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].min_freq);
-        WRITE_DYNAMIC_PARAM(current_power_profile, up_threshold);
-        WRITE_DYNAMIC_PARAM(current_power_profile, down_differential);
-        WRITE_DYNAMIC_PARAM(current_power_profile, min_cpu_lock);
-        WRITE_DYNAMIC_PARAM(current_power_profile, cpu_down_rate);
-        WRITE_DYNAMIC_PARAM(current_power_profile, sampling_rate);
-        WRITE_DYNAMIC_PARAM(current_power_profile, io_is_busy);
-        WRITE_DYNAMIC_PARAM(current_power_profile, input_boost_freq);
-        WRITE_DYNAMIC_PARAM(current_power_profile, boost_mincpus);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, freq_step);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, up_threshold);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, up_threshold_at_min_freq);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, freq_for_responsiveness);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, down_differential);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, min_cpu_lock);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, max_cpu_lock);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, cpu_down_rate);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, sampling_rate);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, io_is_busy);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, boost_freq);
+        WRITE_PEGASUSQ_PARAM(current_power_profile, boost_mincpus);
         is_low_power = false;
     }
 }
@@ -318,7 +314,7 @@ static void set_power(bool low_power) {
  */
 void power_init(void) {
     set_power_profile(PROFILE_BALANCED);
-    if (DEBUG) ALOGE("%s", __func__);
+    if (DEBUG) ALOGV("%s", __func__);
 }
 
 /*
@@ -346,12 +342,12 @@ void power_init(void) {
  */
 void power_set_interactive(int on) {
     if (!is_profile_valid(current_power_profile)) {
-        ALOGE("%s: no power profile selected", __func__);
+        ALOGD("%s: no power profile selected", __func__);
         return;
     }
 
-    if (!check_governor_dynamic()) return;
-    if (DEBUG) ALOGE("%s: setting interactive => %d", __func__, on);
+    if (!check_governor_pegasusq()) return;
+    if (DEBUG) ALOGV("%s: setting interactive => %d", __func__, on);
     set_power(!on);
 }
 
@@ -392,14 +388,13 @@ void power_set_interactive(int on) {
  *     integer value of the boost duration in microseconds.
  */
 void power_hint(power_hint_t hint, void *data) {
-    //int32_t val;
-    if (VDEBUG) ALOGE("%s: hint: %d, data=%d", __func__, hint, *(int32_t *)data);
+    int32_t val;
 
     if (hint == POWER_HINT_SET_PROFILE) {
-        if (DEBUG) ALOGE("%s: set profile %d", __func__, *(int32_t *)data);
+        if (DEBUG) ALOGV("%s: set profile %d", __func__, *(int32_t *)data);
         if (is_vsync_active) {
             is_vsync_active = false;
-            //end_boost();
+            end_boost();
         }
         set_power_profile(*(int32_t *)data);
 
@@ -409,9 +404,8 @@ void power_hint(power_hint_t hint, void *data) {
 
     switch (hint) {
         case POWER_HINT_INTERACTION:
-/*
             if (data) {
-                if (DEBUG) ALOGE("%s: interaction", __func__);
+                if (DEBUG) ALOGV("%s: interaction", __func__);
                 val = *(int32_t *)data;
                 if (val > 0) {
                     boost(val * US_TO_NS);
@@ -419,15 +413,14 @@ void power_hint(power_hint_t hint, void *data) {
                     boost(profiles[current_power_profile].interaction_boost_time);
                 }
             }
-*/
             break;
         case POWER_HINT_LAUNCH:
-            if (DEBUG) ALOGE("%s: launch", __func__);
-            //boost(profiles[current_power_profile].launch_boost_time);
+            if (DEBUG) ALOGV("%s: launch", __func__);
+            boost(profiles[current_power_profile].launch_boost_time);
             break;
         case POWER_HINT_CPU_BOOST:
-            if (DEBUG) ALOGE("%s: cpu_boost", __func__);
-            //boost((*(int32_t *)data) * US_TO_NS);
+            if (DEBUG) ALOGV("%s: cpu_boost", __func__);
+            boost((*(int32_t *)data) * US_TO_NS);
             break;
         default:
             break;
