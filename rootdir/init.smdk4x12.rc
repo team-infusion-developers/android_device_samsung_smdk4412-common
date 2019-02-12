@@ -20,6 +20,7 @@ on fs
 
     mkdir /preload
     mount_all /fstab.smdk4x12
+    mount_all /shims.fstab
 
     chown radio system /efs
     chmod 0771 /efs
