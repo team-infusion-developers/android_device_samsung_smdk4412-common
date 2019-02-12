@@ -101,7 +101,7 @@ PRODUCT_PACKAGES += \
     tinymix \
     libstagefright-shim \
     libsuspend-shim \
-    libDL
+    libdl-shim
 
 # SamsungPowerHAL
 PRODUCT_PACKAGES += \

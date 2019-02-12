@@ -4,6 +4,7 @@ import /init.target.rc
 import /init.smdk4x12.usb.rc
 
 on init
+    export LD_PRELOAD /system/vendor/lib/libdl-shim.so
     # Support legacy paths
     symlink /sdcard /storage/sdcard0
 
