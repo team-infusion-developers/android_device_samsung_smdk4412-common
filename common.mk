@@ -101,8 +101,7 @@ PRODUCT_PACKAGES += \
     macloader \
     tinymix \
     libstagefright-shim \
-    libsuspend-shim \
-    libdl-shim
+    libsuspend-shim
 
 # SamsungPowerHAL
 PRODUCT_PACKAGES += \
