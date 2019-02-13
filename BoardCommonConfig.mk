@@ -57,6 +57,8 @@ LZMA_RAMDISK_TARGETS := recovery
 
 TARGET_ALLOWS_INVALID_PTHREAD := true
 
+TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
+
 TARGET_LD_SHIM_LIBS := \
     /system/lib/libsuspend.so|libsuspend-shim.so \
     /system/lib/libandroid_servers.so|libsuspend-shim.so \
