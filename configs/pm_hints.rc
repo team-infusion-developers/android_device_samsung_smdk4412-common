@@ -1,5 +1,0 @@
-on property:media.player_start=0
-    write /sys/devices/system/cpu/cpufreq/dynamic/min_cpu_lock 1
-
-on property:media.player_start=1
-    write /sys/devices/system/cpu/cpufreq/dynamic/min_cpu_lock 4

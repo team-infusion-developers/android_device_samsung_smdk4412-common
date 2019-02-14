@@ -204,14 +204,22 @@ static int
 decodeSimStatus (RIL_RadioState radioState) {
    switch (radioState) {
        case RADIO_STATE_SIM_NOT_READY:
+           RLOGE("%s: radioState=RADIO_STATE_SIM_NOT_READY", __func__);
        case RADIO_STATE_RUIM_NOT_READY:
+           RLOGE("%s: radioState=RADIO_STATE_RUIM_NOT_READY", __func__);
        case RADIO_STATE_NV_NOT_READY:
+           RLOGE("%s: radioState=RADIO_STATE_NV_NOT_READY", __func__);
        case RADIO_STATE_NV_READY:
+           RLOGE("%s: radioState=RADIO_STATE_NV_READY", __func__);
            return -1;
        case RADIO_STATE_SIM_LOCKED_OR_ABSENT:
+           RLOGE("%s: radioState=RADIO_STATE_SIM_LOCKED_OR_ABSENT", __func__);
        case RADIO_STATE_SIM_READY:
+           RLOGE("%s: radioState=RADIO_STATE_SIM_READY", __func__);
        case RADIO_STATE_RUIM_READY:
+           RLOGE("%s: radioState=RADIO_STATE_RUIM_READY", __func__);
        case RADIO_STATE_RUIM_LOCKED_OR_ABSENT:
+           RLOGE("%s: radioState=RADIO_STATE_RUIM_LOCKED_OR_ABSENT", __func__);
            return radioState;
        default:
            RLOGD("decodeSimStatus: Invoked with incorrect RadioState");
@@ -243,6 +251,7 @@ processRadioState(RIL_RadioState newRadioState) {
             }
         }
         newSimStatus = decodeSimStatus(newRadioState);
+        RLOGE("%s: newSimStatus=%d", __func__, newSimStatus);
         if(newSimStatus != simRuimStatus) {
             simRuimStatus = newSimStatus;
             rilEnv->OnUnsolicitedResponse(RIL_UNSOL_RESPONSE_SIM_STATUS_CHANGED, NULL, 0);
