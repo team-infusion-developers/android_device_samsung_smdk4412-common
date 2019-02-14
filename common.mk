@@ -42,6 +42,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
 
+# SIM detection fix
+PRODUCT_COPY_FILES += \
+    $(COMMON_PATH)/configs/20restart_rild:system/etc/init.d/20restart_rild
+
 # Legacy GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl \
