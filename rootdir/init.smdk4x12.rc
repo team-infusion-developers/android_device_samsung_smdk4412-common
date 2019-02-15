@@ -223,6 +223,85 @@ on post-fs-data
     chown system system /sys/kernel/ipv4/tcp_rmem_max
     chown root radio /proc/cmdline
 
+# Dynamic CPU governor
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/input_boost_freq
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/max_non_oc_freq
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_freq_1_1
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_freq_2_0
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_freq_2_1
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_freq_3_0
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_freq_3_1
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_freq_4_0
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/suspend_max_freq
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/sampling_rate
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/max_cpu_lock
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/cpu_down_freq
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/cpu_down_rate
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/oc_freq_boost_ms
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/input_boost_ms
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/sampling_down_factor_relax_khz
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/up_threshold
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/cpu_up_freq
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/cpu_up_rate
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/io_is_busy
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/down_differential
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/power_optimal_freq
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/sampling_rate_min
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/sampling_down_factor
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/standby_threshold_freq
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/suspend_sampling_rate
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/standby_delay_factor
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/ignore_nice_load
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/standby_sampling_rate
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/standby_sampling_up_factor
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/suspend_sampling_up_factor
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/high_freq_sampling_up_factor
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_lock
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/up_nr_cpus
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_rq_1_1
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_rq_2_0
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_rq_2_1
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_rq_3_0
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_rq_3_1
+    chown system system /sys/devices/system/cpu/cpufreq/dynamic/hotplug_rq_4_0
+
+# PegasusQ CPU governor
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_1_1
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_2_0
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_2_1
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_3_0
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_3_1
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_freq_4_0
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/sampling_rate
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/max_cpu_lock
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/cpu_down_freq
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/cpu_down_rate
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/io_is_busy
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/up_threshold
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/boost_mincpus
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/down_differential
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/up_threshold_at_min_freq
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/sampling_rate_min
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/cpu_up_freq
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/cpu_up_rate
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/freq_step
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/sampling_down_factor
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/min_cpu_lock
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/dvfs_debug
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/boost_freq
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/cpucore_table
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_lock
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/up_nr_cpus
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/ignore_nice_load
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/boost_lock_time
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/freq_for_responsiveness
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_1_1
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_2_0
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_2_1
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_3_0
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_3_1
+    chown system system /sys/devices/system/cpu/cpufreq/pegasusq/hotplug_rq_4_0
+
 # Audio (Earjack)
     chown system radio /sys/class/audio/earjack/select_jack
     chown system radio /sys/class/audio/earjack/key_state

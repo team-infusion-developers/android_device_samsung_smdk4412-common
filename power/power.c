@@ -39,6 +39,7 @@
 
 
 #define PEGASUSQ_PATH "/sys/devices/system/cpu/cpufreq/pegasusq/"
+#define DYNAMIC_PATH "/sys/devices/system/cpu/cpufreq/dynamic/"
 #define MINMAX_CPU_PATH "/sys/power/"
 
 #define US_TO_NS (1000L)
@@ -146,6 +147,10 @@ static int sysfs_write_long(char *path, long value) {
     ALOGV("%s: WRITE_PEGASUSQ_PARAM(profile=%d, param=%s): new val => %d", __func__, profile, #param, profiles[profile].param); \
     sysfs_write_int(PEGASUSQ_PATH #param, profiles[profile].param); \
 } while (0)
+#define WRITE_DYNAMIC_PARAM(profile, param) do { \
+    ALOGV("%s: WRITE_DYNAMIC_PARAM(profile=%d, param=%s): new val => %d", __func__, profile, #param, profiles[profile].param); \
+    sysfs_write_int(DYNAMIC_PATH #param, profiles[profile].param); \
+} while (0)
 #define WRITE_LOW_POWER_PARAM(profile, param) do { \
     ALOGV("%s: WRITE_LOW_POWER_PARAM(profile=%d, param=%s): new val => %d", \
             __func__, profile, #param, profiles_low_power[profile].param); \
@@ -155,6 +160,10 @@ static int sysfs_write_long(char *path, long value) {
     ALOGV("%s: WRITE_PEGASUSQ_VALUE(param=%s, value=%d)", __func__, #param, value); \
     sysfs_write_int(PEGASUSQ_PATH #param, value); \
 } while (0)
+#define WRITE_DYNAMIC_VALUE(param, value) do { \
+    ALOGV("%s: WRITE_DYNAMIC_VALUE(param=%s, value=%d)", __func__, #param, value); \
+    sysfs_write_int(DYNAMIC_PATH #param, value); \
+} while (0)
 #define WRITE_MINMAX_CPU(param, value) do { \
     ALOGV("%s: WRITE_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
     sysfs_write_int(MINMAX_CPU_PATH #param, value); \
@@ -163,11 +172,21 @@ static int sysfs_write_long(char *path, long value) {
 #define WRITE_PEGASUSQ_PARAM(profile, param) sysfs_write_int(PEGASUSQ_PATH #param, profiles[profile].param)
 #define WRITE_LOW_POWER_PARAM(profile, param) sysfs_write_int(PEGASUSQ_PATH #param, profiles_low_power[profile].param)
 #define WRITE_PEGASUSQ_VALUE(param, value)   sysfs_write_int(PEGASUSQ_PATH #param, value)
+#define WRITE_DYNAMIC_PARAM(profile, param) sysfs_write_int(DYNAMIC_PATH #param, profiles[profile].param)
+#define WRITE_DYNAMIC_VALUE(param, value)   sysfs_write_int(DYNAMIC_PATH #param, value)
 #define WRITE_MINMAX_CPU(param, value) sysfs_write_int(MINMAX_CPU_PATH #param, value)
 #endif
+
 static bool check_governor_pegasusq() {
     struct stat s;
     int err = stat(PEGASUSQ_PATH, &s);
+    if (err != 0) return false;
+    return S_ISDIR(s.st_mode);
+}
+
+static bool check_governor_dynamic() {
+    struct stat s;
+    int err = stat(DYNAMIC_PATH, &s);
     if (err != 0) return false;
     return S_ISDIR(s.st_mode);
 }
@@ -204,6 +223,36 @@ static void set_power_profile(int profile) {
         WRITE_PEGASUSQ_PARAM(profile, io_is_busy);
         WRITE_PEGASUSQ_PARAM(profile, boost_freq);
         WRITE_PEGASUSQ_PARAM(profile, boost_mincpus);
+    } else if (check_governor_dynamic()) {
+        WRITE_DYNAMIC_PARAM(profile, hotplug_freq_1_1);
+        WRITE_DYNAMIC_PARAM(profile, hotplug_freq_2_0);
+        WRITE_DYNAMIC_PARAM(profile, hotplug_rq_1_1);
+        WRITE_DYNAMIC_PARAM(profile, hotplug_rq_2_0);
+        WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[profile].max_freq);
+        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[profile].min_freq);
+        WRITE_DYNAMIC_PARAM(profile, up_threshold);
+        WRITE_DYNAMIC_PARAM(profile, down_differential);
+        WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);
+        WRITE_DYNAMIC_PARAM(profile, max_cpu_lock);
+        WRITE_DYNAMIC_PARAM(profile, cpu_up_rate);
+        WRITE_DYNAMIC_PARAM(profile, cpu_down_rate);
+        WRITE_DYNAMIC_PARAM(profile, sampling_rate);
+        WRITE_DYNAMIC_PARAM(profile, io_is_busy);
+        WRITE_DYNAMIC_PARAM(profile, boost_freq);
+        WRITE_DYNAMIC_PARAM(profile, boost_mincpus);
+
+        WRITE_DYNAMIC_PARAM(profile, power_optimal_freq);
+        WRITE_DYNAMIC_PARAM(profile, sampling_down_factor);
+        WRITE_DYNAMIC_PARAM(profile, sampling_down_factor_relax_khz);
+        WRITE_DYNAMIC_PARAM(profile, standby_delay_factor);
+        WRITE_DYNAMIC_PARAM(profile, standby_threshold_freq);
+        WRITE_DYNAMIC_PARAM(profile, max_non_oc_freq);
+        WRITE_DYNAMIC_PARAM(profile, oc_freq_boost_ms);
+        WRITE_DYNAMIC_PARAM(profile, standby_sampling_rate);
+        WRITE_DYNAMIC_PARAM(profile, standby_sampling_up_factor);
+        WRITE_DYNAMIC_PARAM(profile, suspend_sampling_rate);
+        WRITE_DYNAMIC_PARAM(profile, suspend_sampling_up_factor);
+        WRITE_DYNAMIC_PARAM(profile, suspend_max_freq);
     } else {
         switch (profile) {
             case PROFILE_POWER_SAVE:
@@ -226,6 +275,7 @@ static void set_power_profile(int profile) {
 }
 
 static void boost(long boost_time) {
+    WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[PROFILE_PERFORMANCE].max_freq);
 #ifdef USE_PEGASUSQ_BOOSTING
     if (is_vsync_active || !check_governor_pegasusq()) return;
     if (boost_time == -1) {
@@ -243,6 +293,7 @@ static void boost(long boost_time) {
 }
 
 static void end_boost() {
+    WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[current_power_profile].max_freq);
 #ifdef USE_PEGASUSQ_BOOSTING
     if (is_vsync_active || !check_governor_pegasusq()) return;
     sysfs_write_int(PEGASUSQ_PATH "boost_lock_time", 0);
@@ -258,7 +309,11 @@ static void set_power(bool low_power) {
         return;
     }
 
-    if (!check_governor_pegasusq()) return;
+    if (!check_governor_pegasusq() && low_power)
+                sysfs_write(GOVERNOR_PATH, GOV_PEGASUSQ);
+    else if (!low_power) {
+                sysfs_write(GOVERNOR_PATH, GOV_DYNAMIC);
+    }
 
     if (is_low_power == low_power) return;
 
@@ -282,24 +337,21 @@ static void set_power(bool low_power) {
         WRITE_LOW_POWER_PARAM(current_power_profile, io_is_busy);
         is_low_power = true;
     } else {
-        WRITE_PEGASUSQ_PARAM(current_power_profile, hotplug_freq_1_1);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, hotplug_freq_2_0);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, hotplug_rq_1_1);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, hotplug_rq_2_0);
+        WRITE_DYNAMIC_PARAM(current_power_profile, hotplug_freq_1_1);
+        WRITE_DYNAMIC_PARAM(current_power_profile, hotplug_freq_2_0);
+        WRITE_DYNAMIC_PARAM(current_power_profile, hotplug_rq_1_1);
+        WRITE_DYNAMIC_PARAM(current_power_profile, hotplug_rq_2_0);
         WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[current_power_profile].max_freq);
         WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].min_freq);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, freq_step);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, up_threshold);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, up_threshold_at_min_freq);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, freq_for_responsiveness);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, down_differential);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, min_cpu_lock);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, max_cpu_lock);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, cpu_down_rate);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, sampling_rate);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, io_is_busy);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, boost_freq);
-        WRITE_PEGASUSQ_PARAM(current_power_profile, boost_mincpus);
+        WRITE_DYNAMIC_PARAM(current_power_profile, up_threshold);
+        WRITE_DYNAMIC_PARAM(current_power_profile, down_differential);
+        WRITE_DYNAMIC_PARAM(current_power_profile, min_cpu_lock);
+        WRITE_DYNAMIC_PARAM(current_power_profile, max_cpu_lock);
+        WRITE_DYNAMIC_PARAM(current_power_profile, cpu_down_rate);
+        WRITE_DYNAMIC_PARAM(current_power_profile, sampling_rate);
+        WRITE_DYNAMIC_PARAM(current_power_profile, io_is_busy);
+        //WRITE_DYNAMIC_PARAM(current_power_profile, boost_freq);
+        //WRITE_DYNAMIC_PARAM(current_power_profile, boost_mincpus);
         is_low_power = false;
     }
 }
