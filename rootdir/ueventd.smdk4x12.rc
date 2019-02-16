@@ -103,7 +103,3 @@
 # t0lte
 /dev/block/mmcblk0p10     0660   system     radio
 /dev/mdm                  0660   system     system
-
-# legacy adb
-/dev/android_adb          0660   adb        adb
-/dev/android_adb_enable   0660   adb        adb

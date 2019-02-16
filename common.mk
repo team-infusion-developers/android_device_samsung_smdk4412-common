@@ -26,8 +26,7 @@ PRODUCT_COPY_FILES := \
     $(COMMON_PATH)/rootdir/init.smdk4x12.usb.rc:root/init.smdk4x12.usb.rc \
     $(COMMON_PATH)/rootdir/init.trace.rc:root/init.trace.rc \
     $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:root/ueventd.smdk4x12.rc \
-    $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc \
-    $(COMMON_PATH)/rootdir/shims.fstab:root/shims.fstab
+    $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -105,7 +104,6 @@ PRODUCT_PACKAGES += \
     lights.smdk4x12 \
     macloader \
     tinymix \
-    adbd_legacy \
     libstagefright-shim \
     libsuspend-shim \
     libC
