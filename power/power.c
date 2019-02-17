@@ -239,12 +239,17 @@ static void set_power_profile(int profile) {
     if (DEBUG) ALOGV("%s: %d", __func__, profile);
 }
 
-static void boost(long boost_time __unused) {
+static void boost(long boost_time __unused, bool boost_minfreq) {
     WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[PROFILE_PERFORMANCE].max_freq);
+    if (boost_minfreq)
+        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[PROFILE_PERFORMANCE].max_freq);
+    else
+        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].boost_freq);
 }
 
 static void end_boost() {
     WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[current_power_profile].max_freq);
+    WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].min_freq);
 }
 
 static void set_power(bool low_power) {
@@ -368,19 +373,19 @@ void power_hint(power_hint_t hint, void *data) {
                 if (DEBUG) ALOGV("%s: interaction", __func__);
                 val = *(int32_t *)data;
                 if (val > 0) {
-                    boost(val * US_TO_NS);
+                    boost(val * US_TO_NS, false);
                 } else {
-                    boost(profiles[current_power_profile].interaction_boost_time);
+                    boost(profiles[current_power_profile].interaction_boost_time, false);
                 }
             }
             break;
         case POWER_HINT_LAUNCH:
             if (DEBUG) ALOGV("%s: launch", __func__);
-            boost(profiles[current_power_profile].launch_boost_time);
+            boost(profiles[current_power_profile].launch_boost_time, true);
             break;
         case POWER_HINT_CPU_BOOST:
             if (DEBUG) ALOGV("%s: cpu_boost", __func__);
-            boost((*(int32_t *)data) * US_TO_NS);
+            boost((*(int32_t *)data) * US_TO_NS, false);
             break;
         default:
             break;
