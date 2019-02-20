@@ -1,39 +1,18 @@
 
-allow adbd default_prop:property_service set;
-allow adbd device:chr_file { open read write };
-allow bluetooth method_trace_data_file:file { execute read unlink };
-allow bootanim unlabeled:file { execute getattr open read };
-allow cameraserver system_data_file:file { open write };
-allow cameraserver unlabeled:file { execute getattr open read };
-allow cpboot-daemon default_prop:property_service set;
-allow cpboot-daemon device:chr_file { create unlink open read write };
-allow cpboot-daemon device:chr_file { open read write };
+#allow cpboot-daemon default_prop:property_service set;
+allow cpboot-daemon device:chr_file { create unlink };
+#allow cpboot-daemon device:chr_file { open read write };
 #allow cpboot-daemon log_device:chr_file { write open };
 #allow cpboot-daemon log_device:dir search;
-allow cpboot-daemon self:capability { dac_override mknod };
-allow cpboot-daemon system_file:file entrypoint;
-allow cpboot-daemon usbfs:filesystem mount;
-allow glgps system_data_file:file { lock open write };
-allow hal_power_default default_android_hwservice:hwservice_manager add;
-allow hal_wifi_default system_data_file:file { getattr open read write };
-allow init self:capability sys_ptrace;
-allow init settings_service:service_manager find;
-allow init shell_exec:file execute_no_trans;
-allow init system_file:file execute_no_trans;
-allow init vendor_file:file execute_no_trans;
-allow macloader vendor_file:file entrypoint;
-allow radio method_trace_data_file:file { execute read unlink };
-allow radio method_trace_data_file:file { read unlink };
+allow cpboot-daemon self:capability { dac_override };
+#allow cpboot-daemon system_file:file entrypoint;
+allow glgps system_data_file:file { lock open };
+#allow hal_power_default default_android_hwservice:hwservice_manager add;
+#allow macloader vendor_file:file entrypoint;
 allow radioreset self:capability sys_nice;
 allow radioreset settings_service:service_manager find;
 allow radioreset system_file:file execute_no_trans;
-allow rild system_data_file:file { append create getattr ioctl lock open read setattr write };
-allow rild system_data_file:file { append create getattr open setattr write };
-allow rild system_data_file:file { getattr ioctl lock open read write };
-allow shell kernel:system syslog_read;
 #allow storaged self:capability sys_nice;
-allow sudaemon self:capability { dac_override setgid setuid };
-allow surfaceflinger unlabeled:file { execute getattr open read };
 
 #============= installd ==============
 allow installd system_data_file:dir search;
