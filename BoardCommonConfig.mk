@@ -62,9 +62,7 @@ TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 
 TARGET_LD_SHIM_LIBS := \
     /system/lib/libsuspend.so|libsuspend-shim.so \
-    /system/lib/libandroid_servers.so|libsuspend-shim.so \
-    /system/lib/libsec-ril.so|libsamsung_symbols.so \
-    /system/vendor/bin/hw/rild|libsamsung_symbols.so
+    /system/lib/libandroid_servers.so|libsuspend-shim.so
 
 WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := true
 
