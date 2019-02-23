@@ -155,7 +155,7 @@ static int autosuspend_wakeup_count_disable(void)
     return ret;
 }
 
-void set_wakeup_callback(void (*func)(bool success))
+void autosuspend_set_wakeup_callback(void (*func)(bool success))
 {
     if (wakeup_func != NULL) {
         ALOGE("Duplicate wakeup callback applied, keeping original");

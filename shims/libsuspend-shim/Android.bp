@@ -2,7 +2,7 @@
 
 cc_library {
     name: "libsuspend-shim",
-    vendor_available: true,
+    vendor: true,
 
     srcs: [
         "autosuspend.c",
