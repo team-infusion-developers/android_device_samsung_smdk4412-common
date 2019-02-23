@@ -32,7 +32,7 @@
 #include <unistd.h>
 
 // #define LOG_NDEBUG 0
-#define DEBUG 0
+#define DEBUG 1
 #include <log/log.h>
 
 #include "power.h"
@@ -197,6 +197,8 @@ static bool is_profile_valid(int profile) {
 }
 
 static void set_power_profile(int profile) {
+    ALOGE("%s: %d", __func__, profile);
+
     if (!is_profile_valid(profile)) {
         ALOGE("%s: unknown profile: %d", __func__, profile);
         return;
@@ -204,13 +206,14 @@ static void set_power_profile(int profile) {
 
     if (profile == current_power_profile) return;
 
+    WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[profile].max_freq);
+    WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[profile].min_freq);
+
     if (check_governor_dynamic()) {
         WRITE_DYNAMIC_PARAM(profile, hotplug_freq_1_1);
         WRITE_DYNAMIC_PARAM(profile, hotplug_freq_2_0);
         WRITE_DYNAMIC_PARAM(profile, hotplug_rq_1_1);
         WRITE_DYNAMIC_PARAM(profile, hotplug_rq_2_0);
-        WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[profile].max_freq);
-        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[profile].min_freq);
         WRITE_DYNAMIC_PARAM(profile, up_threshold);
         WRITE_DYNAMIC_PARAM(profile, down_differential);
         WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);
@@ -240,16 +243,21 @@ static void set_power_profile(int profile) {
 }
 
 static void boost(long boost_time __unused, bool boost_minfreq) {
-    WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[PROFILE_PERFORMANCE].max_freq);
-    if (boost_minfreq)
-        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[PROFILE_PERFORMANCE].max_freq);
-    else
-        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].boost_freq);
+    (void)boost_minfreq;
+    if (current_power_profile == PROFILE_POWER_SAVE) {
+        WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[PROFILE_PERFORMANCE].max_freq);
+        /*if (boost_minfreq)
+            WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[PROFILE_PERFORMANCE].max_freq);
+        else
+            WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].boost_freq);*/
+    }
 }
 
 static void end_boost() {
-    WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[current_power_profile].max_freq);
-    WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].min_freq);
+    if (current_power_profile == PROFILE_POWER_SAVE) {
+        //WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[current_power_profile].max_freq);
+        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].min_freq);
+    }
 }
 
 static void set_power(bool low_power) {
