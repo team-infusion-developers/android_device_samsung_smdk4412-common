@@ -77,7 +77,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     AdvancedDisplay \
     android.hardware.graphics.allocator@2.0-impl-exynos4 \
-    android.hardware.graphics.mapper@2.0-impl \
+    android.hardware.graphics.mapper@2.0-impl-exynos4 \
     android.hardware.graphics.composer@2.1-impl \
     android.hardware.audio@2.0-impl \
     android.hardware.audio.effect@2.0-impl \
@@ -150,6 +150,14 @@ PRODUCT_COPY_FILES += \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
+
+# Memory Optimizations
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.vendor.qti.sys.fw.bg_apps_limit=10 \
+    ro.vendor.qti.am.reschedule_service=true \
+    ro.vendor.qti.sys.fw.bservice_enable=true \
+    ro.vendor.qti.sys.fw.bservice_age=5000 \
+    ro.vendor.qti.sys.fw.bservice_limit=10
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \

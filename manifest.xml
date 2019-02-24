@@ -114,7 +114,7 @@
     </hal>
     <hal format="hidl">
         <name>android.hardware.light</name>
-        <transport>hwbinder</transport>
+        <transport arch="32">passthrough</transport>
         <version>2.0</version>
         <interface>
             <name>ILight</name>
@@ -208,6 +208,15 @@
         <version>1.0</version>
         <interface>
             <name>ISupplicant</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>android.hardware.power</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IPower</name>
             <instance>default</instance>
         </interface>
     </hal>
