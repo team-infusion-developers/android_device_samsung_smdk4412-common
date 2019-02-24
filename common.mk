@@ -116,8 +116,8 @@ PRODUCT_PACKAGES += \
     libC
 
 # SamsungPowerHAL
-PRODUCT_PACKAGES += \
-    android.hardware.power@1.0-service.exynos4
+#PRODUCT_PACKAGES += \
+#    android.hardware.power@1.0-service.exynos4
 
 # Usb
 PRODUCT_PACKAGES += \
