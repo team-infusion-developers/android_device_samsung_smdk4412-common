@@ -45,7 +45,6 @@ TARGET_PROVIDES_INIT := true
 TARGET_PROVIDES_INIT_TARGET_RC := true
 
 # Vendor init
-TARGET_INIT_VENDOR_LIB := libinit_smdk4412-common
 TARGET_RECOVERY_DEVICE_MODULES := libinit_smdk4412-common
 
 # Kernel
