@@ -22,7 +22,7 @@ allow init storage_file:lnk_file read;
 
 #============= logpersist ==============
 allow logpersist devpts:chr_file { read write };
-allow logpersist media_rw_data_file:file write;
+#allow logpersist media_rw_data_file:file write;
 allow logpersist sdcardfs:file write;
 allow logpersist sysfs_cpuinfo:dir search;
 allow logpersist sysfs_cpuinfo:file { getattr open read };

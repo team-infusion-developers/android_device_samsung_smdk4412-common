@@ -6,6 +6,7 @@
 # RIL
 /dev/link_pm                                                     u:object_r:radio_device:s0
 /dev/umts_boot0                                                  u:object_r:radio_device:s0
+/dev/cdma_boot0                                                  u:object_r:radio_device:s0
 /dev/umts_boot1                                                  u:object_r:radio_device:s0
 /dev/umts_ipc0                                                   u:object_r:radio_device:s0
 /dev/umts_ramdump0                                               u:object_r:radio_device:s0
@@ -97,3 +98,6 @@
 /data/gps/\.gps\.interface\.pipe\.to_gpsd                        u:object_r:gps_data_file:s0
 /data/gps/\.gps\.interface\.pipe\.to_jni                         u:object_r:gps_data_file:s0
 /data/gps/gldata\.sto                                            u:object_r:gps_data_file:s0
+
+# USB
+/sys/class/android_usb/android0/enable                           u:object_r:sysfs_usb_file:s0

@@ -1,0 +1,37 @@
+#============= adbd ==============
+#allow adbd system_data_file:file getattr;
+
+#============= cpboot-daemon ==============
+allow cpboot-daemon cbd_device:chr_file { ioctl open read write };
+
+#============= glgps ==============
+allow glgps vendor_file:file execute_no_trans;
+
+#============= hal_wifi_default ==============
+allow hal_wifi_default efs_file:dir search;
+#allow hal_wifi_default system_data_file:file write;
+allow hal_wifi_default wifi_data_file:file { open read };
+
+#============= rild ==============
+#allow rild system_data_file:file { append create getattr open write };
+
+#============= system_app ==============
+#allow system_app installd_service:service_manager find;
+#allow system_app netd_service:service_manager find;
+
+#============= system_server ==============
+allow system_server gps_data_file:fifo_file { open read setattr write };
+
+#============= untrusted_app ==============
+#allow untrusted_app sysfs_zram:dir search;
+#allow untrusted_app sysfs_zram:file read;
+
+#============= untrusted_app_25 ==============
+#allow untrusted_app_25 sysfs_cpuinfo:dir read;
+
+#============= usbreset ==============
+allow usbreset shell_exec:file { entrypoint getattr read };
+allow usbreset sysfs_usb_file:file { open read write };
+#allow usbreset sysfs_cpuinfo:dir search;
+#allow usbreset sysfs_cpuinfo:file read;
+allow usbreset toolbox_exec:file { execute execute_no_trans getattr open read };
