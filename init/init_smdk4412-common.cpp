@@ -5,6 +5,8 @@
 #include <android-base/properties.h>
 #include <android-base/strings.h>
 
+#include <selinux/selinux.h>
+
 #include "vendor_init.h"
 
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
@@ -64,6 +66,9 @@ void vendor_load_properties()
         property_override_dual("ro.product.model", "ro.product.vendor.model", "GT-N7100");
         property_override_dual("ro.product.device", "ro.product.vendor.device", "GT-N7100");
     }
+
+    lsetfilecon("/sys/class/sec/gps/GPS_nRST/value", "u:object_r:sysfs_gps_file:s0");
+    lsetfilecon("/sys/class/sec/gps/GPS_PWR_EN/value", "u:object_r:sysfs_gps_file:s0");
 
     const std::string device = android::base::GetProperty("ro.product.device", "");
     LOG(INFO) << "Found bootloader " << bootloader.c_str() << ". "
