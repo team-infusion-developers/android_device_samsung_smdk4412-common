@@ -53,12 +53,20 @@ void vendor_load_properties()
 
     if (model == "I9300") {
         /* GT-I9300 */
-        property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "samsung/m0xx/m0:4.3/JSS15J/I9300XXUGMJ9:user/release-keys");
+        property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint",
+                               "samsung/m0xx/m0:4.3/JSS15J/I9300XXUGMJ9:user/release-keys");
         property_override_dual("ro.product.model", "ro.product.vendor.model", "GT-I9300");
         property_override_dual("ro.product.device", "ro.product.vendor.device", "GT-I9300");
-   }
+    } else if (model == "N7100") {
+        /* GT-N7100 */
+        property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint",
+                               "samsung/t03gxx/t03g:4.3/JSS15J/N7100XXUEMK4:user/release-keys");
+        property_override_dual("ro.product.model", "ro.product.vendor.model", "GT-N7100");
+        property_override_dual("ro.product.device", "ro.product.vendor.device", "GT-N7100");
+    }
 
     const std::string device = android::base::GetProperty("ro.product.device", "");
-    LOG(INFO) << "Found bootloader " << bootloader.c_str() << ". " << "Setting build properties for " << device.c_str() << ".\n";
+    LOG(INFO) << "Found bootloader " << bootloader.c_str() << ". "
+              << "Setting build properties for " << device.c_str() << ".\n";
 }
 
