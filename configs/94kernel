@@ -107,6 +107,10 @@ echo 1 > /sys/class/misc/boeffla_sound/fll_tuning
 echo 1 > /sys/module/leds_an30259a/parameters/led_switch
 
 #--------------- Kernel Tweaks ---------------------#
+
+# Limit max cpufreq
+echo 1100000 > /sys/power/cpufreq_max_limit
+
 # Swappiness
 echo 60 > /proc/sys/vm/swappiness
 
