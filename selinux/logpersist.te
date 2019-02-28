@@ -1,0 +1,11 @@
+#============= logpersist ==============
+allow logpersist devpts:chr_file { read write };
+#allow logpersist media_rw_data_file:file write;
+allow logpersist sdcardfs:file write;
+allow logpersist sysfs_cpuinfo:dir search;
+allow logpersist sysfs_cpuinfo:file { getattr open read };
+
+#allow shell kernel:system syslog_read;
+
+#allow adbd default_prop:property_service set;
+#allow adbd device:chr_file { open read write };
