@@ -95,6 +95,8 @@ PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
     hwcomposer.exynos4 \
     gralloc.exynos4 \
+    libMali \
+    libEGL_mali \
     gCam \
     android.hardware.camera.provider@2.4-impl-legacy \
     camera.device@1.0-impl-legacy \
