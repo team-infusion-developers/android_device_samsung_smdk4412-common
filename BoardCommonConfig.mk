@@ -76,6 +76,7 @@ BOARD_HARDWARE_CLASS := hardware/samsung/lineagehw \
 # Graphics
 USE_OPENGL_RENDERER := true
 BOARD_USES_SKIAHWJPEG := true
+TARGET_PROVIDES_LIBEGL_MALI := true
 TARGET_NEEDS_NATIVE_WINDOW_FORMAT_FIX := true
 # Only needed by Samsung skia changes (not ported beyond 4.4)
 #BOARD_GLOBAL_CFLAGS += -DSEC_HWJPEG_G2D
