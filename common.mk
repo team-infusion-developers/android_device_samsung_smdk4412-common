@@ -129,6 +129,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/mediaserver.rc:system/etc/init/mediaserver.rc
 
+# Charger
+PRODUCT_PACKAGES += \
+    charger_exynos4 \
+    charger_res_images
+
 # MFC API
 PRODUCT_PACKAGES += \
     libsecmfcdecapi \
