@@ -1758,13 +1758,11 @@ void *exynos_camera_capture_thread(void *data)
 	exynos_camera = (struct exynos_camera *) data;
 
 	ALOGE("%s: Starting thread", __func__);
-	if (exynos_camera->preview_window == NULL) {
-		// Lock preview lock mutex
-		ALOGE("%s: tid=%d: capture_lock lock", __func__, gettid());
-		pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
-	}
 
 	while (exynos_camera->capture_enabled == 1) {
+		ALOGE("%s: tid=%d: capture_lock lock", __func__, gettid());
+		pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
+
 		//Check if recording-start is triggered.
 		if (exynos_camera->recording_msg_start) {
 			exynos_camera->recording_msg_start = 0;
@@ -1790,12 +1788,6 @@ void *exynos_camera_capture_thread(void *data)
 		}
 
 		exynos_camera->capture_thread_running = 1;
-	}
-
-	if (exynos_camera->preview_window == NULL) {
-		// Unlock preview lock mutex
-		ALOGE("%s: tid=%d: capture_lock unlock", __func__, gettid());
-		pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 	}
 
 	exynos_camera->capture_thread_running = 0;
@@ -1887,6 +1879,9 @@ void exynos_camera_capture_thread_stop(struct exynos_camera *exynos_camera)
 		ALOGE("Capture thread was already stopped!");
 		return;
 	}
+
+	ALOGE("%s: tid=%d: capture_lock unlock", __func__, gettid());
+	pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 
 	// Wait for the thread to end
 	i = 0;
@@ -2153,6 +2148,9 @@ int exynos_camera_capture_start(struct exynos_camera *exynos_camera)
 	}
 
 	exynos_camera->capture_enabled = 1;
+
+	ALOGE("%s: tid=%d: capture_lock unlock", __func__, gettid());
+	pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 
 	rc = 0;
 	goto complete;
@@ -2472,10 +2470,6 @@ void exynos_camera_preview_stop(struct exynos_camera *exynos_camera)
 	}
 
 	exynos_camera->preview_enabled = 0;
-
-	// Unlock preview lock
-	ALOGE("%s: tid=%d: capture_lock unlock", __func__, gettid());
-	pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 
 	ALOGE("%s: tid=%d: capture lock", __func__, gettid());
 	pthread_mutex_lock(&exynos_camera->capture_mutex);
