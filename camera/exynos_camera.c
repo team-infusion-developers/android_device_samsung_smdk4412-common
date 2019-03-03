@@ -1758,11 +1758,13 @@ void *exynos_camera_capture_thread(void *data)
 	exynos_camera = (struct exynos_camera *) data;
 
 	ALOGE("%s: Starting thread", __func__);
-
-	while (exynos_camera->capture_enabled == 1) {
+	if (exynos_camera->preview_window == NULL) {
+		// Lock preview lock mutex
 		ALOGE("%s: tid=%d: capture_lock lock", __func__, gettid());
 		pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
+	}
 
+	while (exynos_camera->capture_enabled == 1) {
 		//Check if recording-start is triggered.
 		if (exynos_camera->recording_msg_start) {
 			exynos_camera->recording_msg_start = 0;
@@ -1788,6 +1790,12 @@ void *exynos_camera_capture_thread(void *data)
 		}
 
 		exynos_camera->capture_thread_running = 1;
+	}
+
+	if (exynos_camera->preview_window == NULL) {
+		// Unlock preview lock mutex
+		ALOGE("%s: tid=%d: capture_lock unlock", __func__, gettid());
+		pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 	}
 
 	exynos_camera->capture_thread_running = 0;
