@@ -1512,23 +1512,25 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 	buffer_length = exynos_camera->capture_buffer_length;
 
 	// V4L2
+	pthread_mutex_lock(&exynos_camera->capture_mutex);
 
 	index = exynos_v4l2_dqbuf_cap(exynos_camera, 0);
 	if (index < 0 || index >= buffers_count) {
 		rc = exynos_v4l2_poll(exynos_camera, 0);
 		if (rc < 0) {
 			ALOGE("%s Unable to poll", __func__);
-			goto error;
+			goto preview_error;
 		} else if (rc == 0) {
 			// Timeout
 			rc = 0;
+			pthread_mutex_unlock(&exynos_camera->capture_mutex);
 			goto complete;
 		}
 
 		index = exynos_v4l2_dqbuf_cap(exynos_camera, 0);
 		if (index < 0 || index >= buffers_count) {
 			ALOGE("%s: Unable to dequeue buffer", __func__);
-			goto error;
+			goto preview_error;
 		}
 	}
 
@@ -1537,7 +1539,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 	address = exynos_v4l2_s_ctrl(exynos_camera, 0, V4L2_CID_PADDR_Y, index);
 	if (address == 0 || address == (int) 0xffffffff) {
 		ALOGE("%s: Unable to get address", __func__);
-		goto error;
+		goto preview_error;
 	}
 
 	offset = address - exynos_camera->capture_memory_address;
@@ -1555,7 +1557,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 		rc = s5c73m3_interleaved_decode(exynos_camera, pointer, buffer_length, exynos_camera->capture_yuv_buffer, &yuv_length, width, height, exynos_camera->capture_jpeg_buffer, &jpeg_length, &decoded, &auto_focus_result, &exynos_camera->exif);
 		if (rc < 0) {
 			ALOGE("%s: Unable to decode S5C73M3 interleaved", __func__);
-			goto error;
+			goto preview_error;
 		}
 
 		// AutoFocus
@@ -1582,7 +1584,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 			rc = exynos_camera_auto_focus(exynos_camera, current_af);
 			if (rc < 0) {
 				ALOGE("%s: Unable to auto focus", __func__);
-				goto error;
+				goto preview_error;
 			}
 		}
 
@@ -1603,7 +1605,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 		rc = exynos_camera_continuous_auto_focus(exynos_camera, current_af);
 		if (rc < 0) {
 			ALOGE("%s: Unable to continuous auto focus", __func__);
-			goto error;
+			goto preview_error;
 		}
 
 		if (!decoded) {
@@ -1680,15 +1682,16 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 			rc = exynos_camera_preview_output_start(exynos_camera);
 			if (rc < 0) {
 				ALOGE("%s: Unable to start Preview Output", __func__);
-				goto error;
+				goto preview_error;
 			}
 		}
 		rc = exynos_camera_preview(exynos_camera);
 		if (rc < 0) {
 			ALOGE("%s: Unable to process Camera Preview", __func__);
-			goto error;
+			goto preview_error;
 		}
 	}
+	pthread_mutex_unlock(&exynos_camera->capture_mutex);
 
 	//Recording
 	if (exynos_camera->recording_enabled) {
@@ -1726,6 +1729,8 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 	rc = 0;
 	goto complete;
 
+preview_error:
+	pthread_mutex_unlock(&exynos_camera->capture_mutex);
 error:
 	rc = -1;
 
@@ -1747,50 +1752,46 @@ void *exynos_camera_capture_thread(void *data)
 	exynos_camera = (struct exynos_camera *) data;
 
 	ALOGE("%s: Starting thread", __func__);
-	exynos_camera->capture_thread_running = 1;
-
-	while (exynos_camera->capture_thread_enabled) {
+	if (exynos_camera->preview_window == NULL) {
+		// Lock preview lock mutex
 		pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
+	}
 
-		while (exynos_camera->capture_enabled) {
-			pthread_mutex_lock(&exynos_camera->capture_mutex);
-
-			if (!exynos_camera->capture_enabled) {
-				pthread_mutex_unlock(&exynos_camera->capture_mutex);
-				break;
-			}
-
-			//Check if recording-start is triggered.
-			if (exynos_camera->recording_msg_start) {
-				exynos_camera->recording_msg_start = 0;
-				rc = exynos_camera_recording_start(exynos_camera);
-				exynos_camera->recording_msg_start_result = rc;
-				if (rc < 0) {
-					ALOGE("%s: Start recording failed!", __func__);
-					exynos_camera_recording_stop(exynos_camera);
-				}
-			}
-
-			//Check if recording-stop is triggered.
-			if (exynos_camera->recording_msg_stop) {
-				exynos_camera->recording_msg_stop = 0;
+	while (exynos_camera->capture_enabled == 1) {
+		//Check if recording-start is triggered.
+		if (exynos_camera->recording_msg_start) {
+			exynos_camera->recording_msg_start = 0;
+			rc = exynos_camera_recording_start(exynos_camera);
+			exynos_camera->recording_msg_start_result = rc;
+			if (rc < 0) {
+				ALOGE("%s: Start recording failed!", __func__);
 				exynos_camera_recording_stop(exynos_camera);
 			}
-
-			rc = exynos_camera_capture(exynos_camera);
-			if (rc < 0) {
-				ALOGE("%s: Unable to capture", __func__);
-				pthread_mutex_unlock(&exynos_camera->capture_mutex);
-				break;
-			}
-
-			pthread_mutex_unlock(&exynos_camera->capture_mutex);
-			// Wait a bit to let others lock the mutex if they need to
-			usleep(10);
 		}
+
+		//Check if recording-stop is triggered.
+		if (exynos_camera->recording_msg_stop) {
+			exynos_camera->recording_msg_stop = 0;
+			exynos_camera_recording_stop(exynos_camera);
+		}
+
+		rc = exynos_camera_capture(exynos_camera);
+		if (rc < 0) {
+			ALOGE("%s: Unable to capture", __func__);
+			exynos_camera->capture_enabled = 0;
+			break;
+		}
+
+		exynos_camera->capture_thread_running = 1;
+	}
+
+	if (exynos_camera->preview_window == NULL) {
+		// Unlock preview lock mutex
+		pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 	}
 
 	exynos_camera->capture_thread_running = 0;
+	exynos_camera->capture_thread_started = 0;
 	ALOGD("%s: Exiting thread", __func__);
 
 	return NULL;
@@ -1828,21 +1829,21 @@ int exynos_camera_capture_thread_start(struct exynos_camera *exynos_camera)
 
 	ALOGD("%s()", __func__);
 
-	if (exynos_camera->capture_thread_enabled) {
+	if (exynos_camera->capture_enabled) {
 		ALOGE("Capture thread was already started!");
 		return -1;
 	}
+
+	exynos_camera->capture_enabled = 1;
+	exynos_camera->capture_thread_started = 1;
 
 	pthread_mutex_init(&exynos_camera->capture_mutex, NULL);
 	pthread_mutex_init(&exynos_camera->capture_lock_mutex, NULL);
 
 	// Initial lock
 	pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
-
 	pthread_attr_init(&thread_attr);
 	pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED);
-
-	exynos_camera->capture_thread_enabled = 1;
 
 	rc = pthread_create(&exynos_camera->capture_thread, &thread_attr, exynos_camera_capture_thread, (void *) exynos_camera);
 	if (rc < 0) {
@@ -1872,19 +1873,14 @@ void exynos_camera_capture_thread_stop(struct exynos_camera *exynos_camera)
 
 	ALOGD("%s()", __func__);
 
-	if (!exynos_camera->capture_thread_enabled) {
+	if (!exynos_camera->capture_enabled) {
 		ALOGE("Capture thread was already stopped!");
 		return;
 	}
 
-	exynos_camera->capture_enabled = 0;
-	exynos_camera->capture_thread_enabled = 0;
-
-	pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
-
 	// Wait for the thread to end
 	i = 0;
-	while (exynos_camera->capture_thread_running) {
+	while (exynos_camera->capture_thread_running || exynos_camera->capture_thread_started) {
 		if (i++ > 30) {
 			ALOGE("Capture thread is taking too long to end, something is going wrong");
 			break;
@@ -1893,11 +1889,12 @@ void exynos_camera_capture_thread_stop(struct exynos_camera *exynos_camera)
 	}
 
 	if (exynos_camera->capture_enabled) {
-		pthread_mutex_lock(&exynos_camera->capture_mutex);
 		exynos_camera_capture_stop(exynos_camera);
-		pthread_mutex_unlock(&exynos_camera->capture_mutex);
 	}
 
+	exynos_camera->capture_enabled = 0;
+
+	pthread_mutex_unlock(&exynos_camera->capture_mutex);
 	pthread_mutex_destroy(&exynos_camera->capture_mutex);
 	pthread_mutex_destroy(&exynos_camera->capture_lock_mutex);
 }
@@ -2145,7 +2142,6 @@ int exynos_camera_capture_start(struct exynos_camera *exynos_camera)
 	}
 
 	exynos_camera->capture_enabled = 1;
-	pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 
 	rc = 0;
 	goto complete;
@@ -2466,10 +2462,13 @@ void exynos_camera_preview_stop(struct exynos_camera *exynos_camera)
 
 	exynos_camera->preview_enabled = 0;
 
+	// Unlock preview lock
+	pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
+
+	pthread_mutex_lock(&exynos_camera->capture_mutex);
+
 	if (exynos_camera->capture_enabled) {
-		pthread_mutex_lock(&exynos_camera->capture_mutex);
 		exynos_camera_capture_stop(exynos_camera);
-		pthread_mutex_unlock(&exynos_camera->capture_mutex);
 	}
 
 	if (exynos_camera->preview_output_enabled)

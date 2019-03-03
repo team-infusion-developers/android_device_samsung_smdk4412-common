@@ -309,7 +309,7 @@ struct exynos_camera {
 	pthread_mutex_t capture_mutex;
 	pthread_mutex_t capture_lock_mutex;
 	int capture_thread_running;
-	int capture_thread_enabled;
+	int capture_thread_started;
 
 	int capture_enabled;
 	struct exynos_exif exif;
