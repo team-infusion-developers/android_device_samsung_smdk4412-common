@@ -1512,6 +1512,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 	buffer_length = exynos_camera->capture_buffer_length;
 
 	// V4L2
+	ALOGE("%s: tid=%d: capture lock", __func__, gettid());
 	pthread_mutex_lock(&exynos_camera->capture_mutex);
 
 	index = exynos_v4l2_dqbuf_cap(exynos_camera, 0);
@@ -1523,6 +1524,8 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 		} else if (rc == 0) {
 			// Timeout
 			rc = 0;
+
+			ALOGE("%s: tid=%d: capture unlock", __func__, gettid());
 			pthread_mutex_unlock(&exynos_camera->capture_mutex);
 			goto complete;
 		}
@@ -1691,6 +1694,8 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 			goto preview_error;
 		}
 	}
+
+	ALOGE("%s: tid=%d: capture unlock", __func__, gettid());
 	pthread_mutex_unlock(&exynos_camera->capture_mutex);
 
 	//Recording
@@ -1730,6 +1735,7 @@ int exynos_camera_capture(struct exynos_camera *exynos_camera)
 	goto complete;
 
 preview_error:
+	ALOGE("%s: tid=%d: capture unlock", __func__, gettid());
 	pthread_mutex_unlock(&exynos_camera->capture_mutex);
 error:
 	rc = -1;
@@ -1754,6 +1760,7 @@ void *exynos_camera_capture_thread(void *data)
 	ALOGE("%s: Starting thread", __func__);
 	if (exynos_camera->preview_window == NULL) {
 		// Lock preview lock mutex
+		ALOGE("%s: tid=%d: capture_lock lock", __func__, gettid());
 		pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
 	}
 
@@ -1787,6 +1794,7 @@ void *exynos_camera_capture_thread(void *data)
 
 	if (exynos_camera->preview_window == NULL) {
 		// Unlock preview lock mutex
+		ALOGE("%s: tid=%d: capture_lock unlock", __func__, gettid());
 		pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 	}
 
@@ -1841,11 +1849,13 @@ int exynos_camera_capture_thread_start(struct exynos_camera *exynos_camera)
 	pthread_mutex_init(&exynos_camera->capture_lock_mutex, NULL);
 
 	// Initial lock
+	ALOGE("%s: tid=%d: capture_lock lock", __func__, gettid());
 	pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
 	pthread_attr_init(&thread_attr);
 	pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED);
 
 	rc = pthread_create(&exynos_camera->capture_thread, &thread_attr, exynos_camera_capture_thread, (void *) exynos_camera);
+
 	if (rc < 0) {
 		ALOGE("%s: Unable to create thread", __func__);
 		goto error;
@@ -1894,6 +1904,7 @@ void exynos_camera_capture_thread_stop(struct exynos_camera *exynos_camera)
 
 	exynos_camera->capture_enabled = 0;
 
+	ALOGE("%s: tid=%d: capture unlock", __func__, gettid());
 	pthread_mutex_unlock(&exynos_camera->capture_mutex);
 	pthread_mutex_destroy(&exynos_camera->capture_mutex);
 	pthread_mutex_destroy(&exynos_camera->capture_lock_mutex);
@@ -2463,8 +2474,10 @@ void exynos_camera_preview_stop(struct exynos_camera *exynos_camera)
 	exynos_camera->preview_enabled = 0;
 
 	// Unlock preview lock
+	ALOGE("%s: tid=%d: capture_lock unlock", __func__, gettid());
 	pthread_mutex_unlock(&exynos_camera->capture_lock_mutex);
 
+	ALOGE("%s: tid=%d: capture lock", __func__, gettid());
 	pthread_mutex_lock(&exynos_camera->capture_mutex);
 
 	if (exynos_camera->capture_enabled) {
