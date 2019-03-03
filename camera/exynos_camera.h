@@ -353,6 +353,9 @@ struct exynos_camera {
 
 	int recording_running;
 	int recording_enabled;
+	int recording_msg_start;
+	int recording_msg_start_result;
+	int recording_msg_stop;
 
 	int recording_output_enabled;
 	camera_memory_t *recording_memory;

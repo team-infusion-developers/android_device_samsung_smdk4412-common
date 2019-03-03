@@ -1760,6 +1760,23 @@ void *exynos_camera_capture_thread(void *data)
 				break;
 			}
 
+			//Check if recording-start is triggered.
+			if (exynos_camera->recording_msg_start) {
+				exynos_camera->recording_msg_start = 0;
+				rc = exynos_camera_recording_start(exynos_camera);
+				exynos_camera->recording_msg_start_result = rc;
+				if (rc < 0) {
+					ALOGE("%s: Start recording failed!", __func__);
+					exynos_camera_recording_stop(exynos_camera);
+				}
+			}
+
+			//Check if recording-stop is triggered.
+			if (exynos_camera->recording_msg_stop) {
+				exynos_camera->recording_msg_stop = 0;
+				exynos_camera_recording_stop(exynos_camera);
+			}
+
 			rc = exynos_camera_capture(exynos_camera);
 			if (rc < 0) {
 				ALOGE("%s: Unable to capture", __func__);
@@ -1768,14 +1785,13 @@ void *exynos_camera_capture_thread(void *data)
 			}
 
 			pthread_mutex_unlock(&exynos_camera->capture_mutex);
-
 			// Wait a bit to let others lock the mutex if they need to
 			usleep(10);
 		}
 	}
 
 	exynos_camera->capture_thread_running = 0;
-	ALOGE("%s: Exiting thread", __func__);
+	ALOGD("%s: Exiting thread", __func__);
 
 	return NULL;
 }
@@ -1869,11 +1885,11 @@ void exynos_camera_capture_thread_stop(struct exynos_camera *exynos_camera)
 	// Wait for the thread to end
 	i = 0;
 	while (exynos_camera->capture_thread_running) {
-		if (i++ > 10000) {
+		if (i++ > 30) {
 			ALOGE("Capture thread is taking too long to end, something is going wrong");
 			break;
 		}
-		usleep(100);
+		usleep(100000); // Sleep 100 ms
 	}
 
 	if (exynos_camera->capture_enabled) {
@@ -3453,7 +3469,20 @@ int exynos_camera_start_recording(struct camera_device *dev)
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
 	exynos_camera->callback_lock = 1;
-	rc = exynos_camera_recording_start(exynos_camera);
+	//This triggers the exynos_camera_recording_start-method in the exynos_preview-method (running in separate thread)
+	exynos_camera->recording_msg_start = 1;
+	exynos_camera->recording_msg_start_result = 1;
+
+	//Wait 300 * 10ms = 3 seconds until recording is actually started.
+	int i;
+	for (i = 0; i < 300; i++) {
+		if (exynos_camera->recording_msg_start_result != 1)
+			return exynos_camera->recording_msg_start_result;
+		usleep(10000);
+	}
+
+	//If it takes more than 3 seconds, something is wrong.
+	rc = -1;
 	exynos_camera->callback_lock = 0;
 
 	return rc;
@@ -3468,7 +3497,7 @@ void exynos_camera_stop_recording(struct camera_device *dev)
 	exynos_camera = (struct exynos_camera *) dev->priv;
 
 	exynos_camera->callback_lock = 1;
-	exynos_camera_recording_stop(exynos_camera);
+	exynos_camera->recording_msg_stop = 1;
 	exynos_camera->callback_lock = 0;
 }
 
