@@ -15,12 +15,12 @@ echo 1 > /sys/class/misc/boeffla_sound/boeffla_sound
 #Microphone volume in-call
 #This setting allows you to control the microphones sensitivity for phone calls (only)
 #-->min: 0, max: 31, step: 1, default: 25
-echo 23 > /sys/class/misc/boeffla_sound/mic_level_call
+#echo 23 > /sys/class/misc/boeffla_sound/mic_level_call
 
 #Microphone volume general
 #This setting allows you to control the microphones sensitivity for all general purposes, apart from calls
 #-->min: 0, max: 31, step: 1, default: 28
-echo 23 > /sys/class/misc/boeffla_sound/mic_level_general
+#echo 23 > /sys/class/misc/boeffla_sound/mic_level_general
 
 #Speakers volume
 #This value increases/decreases volume of internal speakers. First value is left, second value is right channel.
@@ -29,7 +29,7 @@ echo 23 > /sys/class/misc/boeffla_sound/mic_level_general
 
 #Speakers tuning
 #This option enables the speaker tuning feature, which improves sound quality of internal speakers, by changing some equalizer settings (bass boost)
-echo 1 > /sys/class/misc/boeffla_sound/speaker_tuning
+#echo 1 > /sys/class/misc/boeffla_sound/speaker_tuning
 
 #Headphones volume
 #This value increases/decreases volume of headphones connected to the device. Does not affect bluetooth connections. First value is left, second value is right channel.
@@ -43,15 +43,15 @@ echo 1 > /sys/class/misc/boeffla_sound/speaker_tuning
 
 #DAC direct
 #By switching DAC direct to on, you will bypass the output mixer in the signal path and connect the DAC directly to the headphone amplifier
-echo 1 > /sys/class/misc/boeffla_sound/dac_direct
+#echo 1 > /sys/class/misc/boeffla_sound/dac_direct
 
 #DAC oversampling
 #This setting changes the oversampling rate from 64 to 128 bit
-echo 1 > /sys/class/misc/boeffla_sound/dac_oversampling
+#echo 1 > /sys/class/misc/boeffla_sound/dac_oversampling
 
 #FLL tuning
 #Tunes the audio chip clock engine, to ensure the right power to your headphones and reduce distorsions and bad behaviours
-echo 1 > /sys/class/misc/boeffla_sound/fll_tuning
+#echo 1 > /sys/class/misc/boeffla_sound/fll_tuning
 
 #Mono downmix
 #This setting changes internal signal handling to switch to mono output for headphones
@@ -109,7 +109,7 @@ echo 1 > /sys/module/leds_an30259a/parameters/led_switch
 #--------------- Kernel Tweaks ---------------------#
 
 # Limit max cpufreq
-echo 1100000 > /sys/power/cpufreq_max_limit
+echo 1000000 > /sys/power/cpufreq_max_limit
 
 # Swappiness
 echo 60 > /proc/sys/vm/swappiness
