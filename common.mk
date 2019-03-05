@@ -46,10 +46,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
 
-# SIM detection fix
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/20restart_rild:system/etc/init.d/20restart_rild
-
 # MTP fix for buggy hosts
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/usbreset.sh:system/bin/usbreset.sh
