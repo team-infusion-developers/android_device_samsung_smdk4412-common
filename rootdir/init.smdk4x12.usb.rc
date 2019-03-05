@@ -9,16 +9,6 @@ on boot
     write /sys/class/android_usb/android0/iProduct ${ro.product.model}
     write /sys/class/android_usb/f_mass_storage/inquiry_string "Samsung"
 
-on property:sys.usb.resetconfig=1
-    write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/enable 1
-
-service usbreset /system/bin/sh /system/bin/usbreset.sh
-    class core
-    user root
-    disabled
-    seclabel u:r:usbreset:s0
-
 on property:sys.usb.config=mtp
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/idVendor 04e8
@@ -35,7 +25,7 @@ on property:sys.usb.config=mtp,adb
     write /sys/class/android_usb/android0/enable 1
     start adbd
     setprop sys.usb.state ${sys.usb.config}
-    start usbreset
+    exec u:r:usbreset:s0 -- /system/bin/sh /system/bin/usbreset.sh
 
 on property:sys.usb.config=rndis
     write /sys/class/android_usb/android0/enable 0

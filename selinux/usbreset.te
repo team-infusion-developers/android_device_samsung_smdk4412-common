@@ -1,5 +1,0 @@
-type usbreset, domain;
-type usbreset_exec, exec_type, file_type;
-
-permissive usbreset;
-init_daemon_domain(usbreset);
