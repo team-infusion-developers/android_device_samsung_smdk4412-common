@@ -28,10 +28,3 @@ allow system_server gps_data_file:fifo_file { open read setattr write };
 
 #============= untrusted_app_25 ==============
 #allow untrusted_app_25 sysfs_cpuinfo:dir read;
-
-#============= usbreset ==============
-allow usbreset shell_exec:file { entrypoint getattr read };
-allow usbreset sysfs_usb_file:file { open read write };
-#allow usbreset sysfs_cpuinfo:dir search;
-#allow usbreset sysfs_cpuinfo:file read;
-allow usbreset toolbox_exec:file { execute execute_no_trans getattr open read };
