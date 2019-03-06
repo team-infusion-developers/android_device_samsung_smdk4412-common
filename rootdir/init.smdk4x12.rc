@@ -356,6 +356,8 @@ on post-fs-data
     chown system radio /sys/class/sec/switch/adc
 
 # SVC LED
+	chown system system /sys/module/leds_an30259a/parameters/led_switch
+	chmod 0664 /sys/module/leds_an30259a/parameters/led_switch
 	chown system system /sys/class/sec/led/led_r
 	chown system system /sys/class/sec/led/led_g
 	chown system system /sys/class/sec/led/led_b

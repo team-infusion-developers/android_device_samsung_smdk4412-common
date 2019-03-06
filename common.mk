@@ -30,8 +30,7 @@ PRODUCT_COPY_FILES := \
 
 # init.d
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/94kernel:system/etc/init.d/94kernel
-    $(LOCAL_PATH)/configs/pm_tweaks.rc:system/vendor/etc/init/pm_tweaks.rc
+    $(LOCAL_PATH)/configs/tweaks.rc:system/vendor/etc/init/tweaks.rc
 
 # Audio
 PRODUCT_COPY_FILES += \

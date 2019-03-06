@@ -1,0 +1,107 @@
+# This is Android init script to control some aspects of the kernel
+# Please make sure that you know what you are doing!
+# Uncomment all parts of the script you want to use by deleting the beginning "#" in the code-line.
+# "write ... 1" means enabled, "write ... 0" means disabled,
+# "write .... xx" means that you have to replace the "xx" with a value of your choice.
+# If something goes wrong, delete this file and reboot. It can also be deleted from TWRP file manager.
+# Based on init.d script written by darkened_sky
+
+on boot:
+    write /sys/power/cpufreq_max_limit -1
+
+on property:sys.boot_completed=1
+    write /sys/module/leds_an30259a/parameters/led_switch 1
+    write /sys/power/cpufreq_max_limit 800000
+
+    #------BOEFFLA SOUND 1.6.7 (by Lord Boeffla)------#
+    #Enable Boeffla sound
+    write /sys/class/misc/boeffla_sound/boeffla_sound 1
+
+    #Microphone volume in-call
+    #This setting allows you to control the microphones sensitivity for phone calls (only)
+    #-->min: 0, max: 31, step: 1, default: 25
+    #write /sys/class/misc/boeffla_sound/mic_level_call 23
+
+    #Microphone volume general
+    #This setting allows you to control the microphones sensitivity for all general purposes, apart from calls
+    #-->min: 0, max: 31, step: 1, default: 28
+    #write /sys/class/misc/boeffla_sound/mic_level_general 23
+
+    #Speakers volume
+    #This value increases/decreases volume of internal speakers. First value is left, second value is right channel.
+    #-->min:0, max:63, steps:1
+    #write /sys/class/misc/boeffla_sound/speaker_volume "55 55"
+
+    #Speakers tuning
+    #This option enables the speaker tuning feature, which improves sound quality of internal speakers, by changing some equalizer settings (bass boost)
+    #write /sys/class/misc/boeffla_sound/speaker_tuning 1
+
+    #Headphones volume
+    #This value increases/decreases volume of headphones connected to the device. Does not affect bluetooth connections. First value is left, second value is right channel.
+    #-->min:0, max:63, steps:1
+    #write /sys/class/misc/boeffla_sound/headphone_volume "xx yy"
+
+    #Stereo expansion
+    #This value controls the depth of simulated 3D sound on 2-channel headphones.
+    #-->min: 0, max: 31, step: 1, default: 0
+    #write /sys/class/misc/boeffla_sound/stereo_expansion xx
+
+    #DAC direct
+    #By switching DAC direct to on, you will bypass the output mixer in the signal path and connect the DAC directly to the headphone amplifier
+    #write /sys/class/misc/boeffla_sound/dac_direct 1
+
+    #DAC oversampling
+    #This setting changes the oversampling rate from 64 to 128 bit
+    #write /sys/class/misc/boeffla_sound/dac_oversampling 1
+
+    #FLL tuning
+    #Tunes the audio chip clock engine, to ensure the right power to your headphones and reduce distorsions and bad behaviours
+    #write /sys/class/misc/boeffla_sound/fll_tuning 1
+
+    #Mono downmix
+    #This setting changes internal signal handling to switch to mono output for headphones
+    #write /sys/class/misc/boeffla_sound/mono_downmix 1
+
+    #Kernel equalizer
+    #This switch controls the state of the hardware equalizer. SE stands for saturation prevention
+    #-->0:Disabled, 1:Enabled with SE, 2:Enabled without SE
+    #write /sys/class/misc/boeffla_sound/eq xx
+
+    #Kernel equalizer gains.
+    #-->min:-12, max:12, steps 1, default:0
+    #write /sys/class/misc/boeffla_sound/eq_gains "0 0 0 0 0"
+
+    #Privacy mode
+    #This setting causes the speakers to be completely muted for all sounds as long as headphones are plugged in. This is applied globally to the whole system
+    #write /sys/class/misc/boeffla_sound/privacy_mode 1
+
+
+    #------Charge Levels (by Lord Boeffla)------#
+
+    #AC charge rate
+    #This configures the charging rate when you load your phone via an AC charger
+    #-->min:0 (off), max:2000, unit:mA, steps:100
+    #write /sys/kernel/charge_levels/charge_level_ac 1500
+
+    #USB charge rate
+    #This configures the charging rate when you load your phone via an USB
+    #-->min:0 (off), max:2000, unit:mA, steps:100
+    #write /sys/kernel/charge_levels/charge_level_usb 500
+
+    #Wireless charge rate
+    #This configures the charging rate when you load your phone via a wireless charging cover
+    #-->min:0 (off), max:2000, unit:mA, steps:100
+    #write /sys/kernel/charge_levels/charge_level_wireless 500
+
+    #Ignore unstable power
+    #By switching this option to on, the charging logic will NOT reduce the charging current for faulty chargers with unstable power. Use at your own risk!
+    #write /sys/kernel/charge_levels/ignore_unstable_power 0
+
+    #Ignore safety margin
+    #By switching this option to on, the further deduction of 100 mA after detecting a stable charging power will not be done. Use at your own risk!
+    #write /sys/kernel/charge_levels/ignore_safety_margin 0
+
+    #--------------- Display brightness config -----------------#
+
+    # Uncomment for a darker config
+    #write /sys/devices/platform/s5p-dsim.0/s6e8aa0/backlight/panel/brightness_config 1
