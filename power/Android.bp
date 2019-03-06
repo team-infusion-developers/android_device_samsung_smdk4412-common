@@ -7,7 +7,7 @@ cc_binary {
     srcs: [
         "service.cpp",
         "Power.cpp",
-        "power.c",
+        "power.cpp",
     ],
 
     cflags: [

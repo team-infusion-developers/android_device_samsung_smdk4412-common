@@ -28,6 +28,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <pthread.h>
 #include <cutils/properties.h>
 
 #include <sys/types.h>
@@ -46,7 +47,7 @@
 
 #define US_TO_NS (1000L)
 
-static int debug_level = 3;
+static int debug_level = 0;
 
 static int current_power_profile = -1;
 static bool is_low_power = false;
@@ -54,11 +55,51 @@ static bool is_vsync_active = false;
 
 static int current_cpufreq_limit = -1;
 
-static void update_cpufreq_max_limit() {
-   current_cpufreq_limit = property_get_int32("sys.power.cpufreq_max_limit", -1);
+static pthread_mutex_t boost_mutex;
+static pthread_t end_boost_pthread;
+
+static bool is_thread_running = false;
+
+/*static*/ void update_cpufreq_max_limit() {
+    current_cpufreq_limit = property_get_int32("sys.power.cpufreq_max_limit", -1);
 }
 
-static void end_boost();
+/*static*/ void end_boost();
+
+/*static*/ void* end_boost_thread(void *data) {
+    long time = reinterpret_cast<long>(data);
+    is_thread_running = true;
+
+    ALOGD_IF(debug_level > 2, "%s: time=%ld", __func__, time);
+
+    usleep(time);
+    end_boost();
+    is_thread_running = false;
+    return NULL;
+}
+
+/*static*/ void do_end_boost(long time) {
+    pthread_attr_t thread_attr;
+    ALOGD_IF(debug_level > 2, "%s: time=%ld", __func__, time);
+
+    if (is_thread_running)
+        return;
+
+    //pthread_mutex_lock(&boost_mutex);
+    /*if (is_thread_running) {
+        pthread_kill(end_boost_pthread, 0);
+        is_thread_running = false;
+    }*/
+
+    pthread_attr_init(&thread_attr);
+    pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED);
+    int rc = pthread_create(&end_boost_pthread, &thread_attr,
+                    end_boost_thread, reinterpret_cast<void*>(time));
+    //pthread_mutex_unlock(&boost_mutex);
+
+    if (rc < 0)
+        ALOGE_IF(debug_level > 2, "%s: Unable to create thread", __func__);
+}
 
 static int sysfs_write_str(char *path, char *s) {
     char buf[80];
@@ -181,13 +222,24 @@ static void set_power_profile(int profile) {
     ALOGD_IF(debug_level > 2, "%s: %d", __func__, profile);
 }
 
-static void boost(long boost_time __unused, bool boost_minfreq) {
+// nanoseconds to microseconds
+#define ns2us(ns) ns / 1000
+
+static void boost(long boost_time, bool boost_minfreq) {
     (void)boost_minfreq;
+
+    if (boost_minfreq)
+        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].boost_freq);
+
     WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[PROFILE_PERFORMANCE].max_freq);
+    do_end_boost(ns2us(boost_time));
+    //do_end_boost(5000000); // 5 sec
 }
 
-static void end_boost() {
+/*static*/ void end_boost() {
     update_cpufreq_max_limit();
+    ALOGD_IF(debug_level > 2, "%s: current_cpufreq_limit=%d", __func__, current_cpufreq_limit);
+    WRITE_MINMAX_CPU(cpufreq_min_limit, 200000);
     WRITE_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
 }
 
@@ -209,7 +261,20 @@ static void set_power(bool low_power) {
     }
 }
 
+static __attribute__((constructor)) void ctr();
+static __attribute__((destructor)) void dtr();
 
+static void ctr()
+{
+    pthread_mutex_init(&boost_mutex, NULL);
+}
+
+static void dtr()
+{
+    pthread_mutex_destroy(&boost_mutex);
+}
+
+extern "C" {
 
 /*
  * (*init)() performs power management setup actions at runtime
@@ -289,7 +354,7 @@ void power_set_interactive(int on) {
  *
  *     An operation is happening where it would be ideal for the CPU to
  *     be boosted for a specific duration. The data parameter is an
- *     integer value of the boost duration in microseconds.
+ *     integer value of the boost duration in nanoseconds.
  */
 void power_hint(power_hint_t hint, void *data) {
     int32_t val;
@@ -335,3 +400,5 @@ int get_number_of_profiles()
 {
     return PROFILE_MAX;
 }
+
+} // extern "C"

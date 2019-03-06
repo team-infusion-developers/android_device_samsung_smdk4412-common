@@ -153,7 +153,7 @@ static power_profile profiles[PROFILE_MAX] = {
         .suspend_sampling_up_factor = 6,
         .suspend_max_freq = 800000,
 
-        .boost_freq = 400000,
+        .boost_freq = 800000,
         .boost_mincpus = 0,
         .interaction_boost_time = 120 * (MS_TO_NS),
         .launch_boost_time = 2000 * (MS_TO_NS),
