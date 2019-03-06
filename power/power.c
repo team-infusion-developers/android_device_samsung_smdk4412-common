@@ -28,6 +28,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <cutils/properties.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -52,49 +54,11 @@ static bool is_vsync_active = false;
 
 static int current_cpufreq_limit = -1;
 
-static void end_boost();
-
-/**********************************************************
- *** HELPER FUNCTIONS
- **********************************************************/
-static int sysfs_read_int(char *path)
-{
-    int len;
-    int fd;
-    int ret = 0;
-    char buf[80];
-
-    fd = open(path, O_RDONLY);
-    if (fd < 0) {
-        strerror_r(errno, buf, sizeof(buf));
-        ALOGD_IF(debug_level > 0, "Error opening %s: %s\n", path, buf);
-        ret = -1;
-    }
-
-    len = read(fd, buf, 15);
-    if (len < 0) {
-        strerror_r(errno, buf, sizeof(buf));
-        ALOGD_IF(debug_level > 0, "Error reading from %s: %s\n", path, buf);
-        ret = -1;
-    }
-
-    close(fd);
-
-    if (ret < 0) {
-        strerror_r(errno, buf, sizeof(buf));
-        ALOGD_IF(debug_level > 0, "Error reading from %s: %s\n", path, buf);
-        ret = -1;
-        return -1;
-    }
-
-    ret = atoi(buf);
-    if (ret == 0) {
-        ALOGD_IF(debug_level > 0, "Error reading from %s: atoi returned 0, buf=%s\n", path, buf);
-        return -1;
-    }
-
-    return ret;
+static void update_cpufreq_max_limit() {
+   current_cpufreq_limit = property_get_int32("sys.power.cpufreq_max_limit", -1);
 }
+
+static void end_boost();
 
 static int sysfs_write_str(char *path, char *s) {
     char buf[80];
@@ -158,10 +122,6 @@ static int sysfs_write_long(char *path, long value) {
     ALOGD_IF(debug_level > 0, "%s: WRITE_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
     sysfs_write_int(MINMAX_CPU_PATH #param, value); \
 } while(0)
-#define READ_MINMAX_CPU(param, value) do { \
-    value = sysfs_read_int(MINMAX_CPU_PATH #param); \
-    ALOGD_IF(debug_level > 0, "%s: READ_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
-} while(0)
 
 static bool check_governor_dynamic() {
     struct stat s;
@@ -194,8 +154,7 @@ static void set_power_profile(int profile) {
         //WRITE_DYNAMIC_PARAM(profile, hotplug_rq_2_0);
         WRITE_DYNAMIC_PARAM(profile, up_threshold);
         WRITE_DYNAMIC_PARAM(profile, down_differential);
-        end_boost();
-        READ_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
+        update_cpufreq_max_limit();
         //WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);
         //WRITE_DYNAMIC_PARAM(profile, max_cpu_lock);
         WRITE_DYNAMIC_PARAM(profile, cpu_up_rate);
@@ -224,11 +183,11 @@ static void set_power_profile(int profile) {
 
 static void boost(long boost_time __unused, bool boost_minfreq) {
     (void)boost_minfreq;
-    READ_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
     WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[PROFILE_PERFORMANCE].max_freq);
 }
 
 static void end_boost() {
+    update_cpufreq_max_limit();
     WRITE_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
 }
 
@@ -259,7 +218,6 @@ static void set_power(bool low_power) {
  * PowerManagerService.
  */
 void power_init(void) {
-    READ_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
     set_power_profile(PROFILE_BALANCED);
     ALOGD_IF(debug_level > 2, "%s", __func__);
 }
