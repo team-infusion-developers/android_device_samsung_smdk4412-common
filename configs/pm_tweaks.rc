@@ -1,0 +1,5 @@
+on post-fs-data:
+     write /sys/power/cpufreq_max_limit -1
+
+on property:sys.boot_completed=1
+     write /sys/power/cpufreq_max_limit 800000

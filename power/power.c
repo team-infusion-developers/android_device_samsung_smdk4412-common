@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -37,74 +38,64 @@
 
 #include "power.h"
 
-
 #define PEGASUSQ_PATH "/sys/devices/system/cpu/cpufreq/pegasusq/"
 #define DYNAMIC_PATH "/sys/devices/system/cpu/cpufreq/dynamic/"
 #define MINMAX_CPU_PATH "/sys/power/"
 
 #define US_TO_NS (1000L)
 
+static int debug_level = 3;
+
 static int current_power_profile = -1;
 static bool is_low_power = false;
 static bool is_vsync_active = false;
 
+static int current_cpufreq_limit = -1;
+
+static void end_boost();
+
 /**********************************************************
  *** HELPER FUNCTIONS
  **********************************************************/
-/*
-static int sysfs_read(char *path, char *s, int num_bytes)
+static int sysfs_read_int(char *path)
 {
-    char errno_str[64];
     int len;
-    int ret = 0;
     int fd;
+    int ret = 0;
+    char buf[80];
 
     fd = open(path, O_RDONLY);
     if (fd < 0) {
-        strerror_r(errno, errno_str, sizeof(errno_str));
-        ALOGE("Error opening %s: %s\n", path, errno_str);
+        strerror_r(errno, buf, sizeof(buf));
+        ALOGD_IF(debug_level > 0, "Error opening %s: %s\n", path, buf);
+        ret = -1;
+    }
 
+    len = read(fd, buf, 15);
+    if (len < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        ALOGD_IF(debug_level > 0, "Error reading from %s: %s\n", path, buf);
+        ret = -1;
+    }
+
+    close(fd);
+
+    if (ret < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        ALOGD_IF(debug_level > 0, "Error reading from %s: %s\n", path, buf);
+        ret = -1;
         return -1;
     }
 
-    len = read(fd, s, num_bytes - 1);
-    if (len < 0) {
-        strerror_r(errno, errno_str, sizeof(errno_str));
-        ALOGE("Error reading from %s: %s\n", path, errno_str);
-
-        ret = -1;
-    } else {
-        s[len] = '\0';
+    ret = atoi(buf);
+    if (ret == 0) {
+        ALOGD_IF(debug_level > 0, "Error reading from %s: atoi returned 0, buf=%s\n", path, buf);
+        return -1;
     }
-
-    close(fd);
 
     return ret;
 }
-*/
-/*
-static void sysfs_write(const char *path, char *s)
-{
-    char errno_str[64];
-    int len;
-    int fd;
 
-    fd = open(path, O_WRONLY);
-    if (fd < 0) {
-        strerror_r(errno, errno_str, sizeof(errno_str));
-        ALOGE("Error opening %s: %s\n", path, errno_str);
-        return;
-    }
-
-    len = write(fd, s, strlen(s));
-    if (len < 0) {
-        strerror_r(errno, errno_str, sizeof(errno_str));
-        ALOGE("Error writing to %s: %s\n", path, errno_str);
-    }
-
-    close(fd);
-}
-*/
 static int sysfs_write_str(char *path, char *s) {
     char buf[80];
     int len;
@@ -114,14 +105,14 @@ static int sysfs_write_str(char *path, char *s) {
     fd = open(path, O_WRONLY);
     if (fd < 0) {
         strerror_r(errno, buf, sizeof(buf));
-        ALOGE("Error opening %s: %s\n", path, buf);
+        ALOGD_IF(debug_level > 0, "Error opening %s: %s\n", path, buf);
         return -1 ;
     }
 
     len = write(fd, s, strlen(s));
     if (len < 0) {
         strerror_r(errno, buf, sizeof(buf));
-        ALOGE("Error writing to %s: %s\n", path, buf);
+        ALOGD_IF(debug_level > 0, "Error writing to %s: %s\n", path, buf);
         ret = -1;
     }
 
@@ -142,9 +133,8 @@ static int sysfs_write_long(char *path, long value) {
     return sysfs_write_str(path, buf);
 }*/
 
-#ifdef LOG_NDEBUG
 #define WRITE_PEGASUSQ_PARAM(profile, param) do { \
-    ALOGV("%s: WRITE_PEGASUSQ_PARAM(profile=%d, param=%s): new val => %d", __func__, profile, #param, profiles[profile].param); \
+    ALOGD_IF(debug_level > 0, "%s: WRITE_PEGASUSQ_PARAM(profile=%d, param=%s): new val => %d", __func__, profile, #param, profiles[profile].param); \
     sysfs_write_int(PEGASUSQ_PATH #param, profiles[profile].param); \
 } while (0)
 #define WRITE_DYNAMIC_PARAM(profile, param) do { \
@@ -152,12 +142,12 @@ static int sysfs_write_long(char *path, long value) {
     sysfs_write_int(DYNAMIC_PATH #param, profiles[profile].param); \
 } while (0)
 #define WRITE_LOW_POWER_PARAM(profile, param) do { \
-    ALOGV("%s: WRITE_LOW_POWER_PARAM(profile=%d, param=%s): new val => %d", \
+    ALOGD_IF(debug_level > 0, "%s: WRITE_LOW_POWER_PARAM(profile=%d, param=%s): new val => %d", \
             __func__, profile, #param, profiles_low_power[profile].param); \
     sysfs_write_int(PEGASUSQ_PATH #param, profiles_low_power[profile].param); \
 } while (0)
 #define WRITE_PEGASUSQ_VALUE(param, value) do { \
-    ALOGV("%s: WRITE_PEGASUSQ_VALUE(param=%s, value=%d)", __func__, #param, value); \
+    ALOGD_IF(debug_level > 0, "%s: WRITE_PEGASUSQ_VALUE(param=%s, value=%d)", __func__, #param, value); \
     sysfs_write_int(PEGASUSQ_PATH #param, value); \
 } while (0)
 #define WRITE_DYNAMIC_VALUE(param, value) do { \
@@ -165,25 +155,13 @@ static int sysfs_write_long(char *path, long value) {
     sysfs_write_int(DYNAMIC_PATH #param, value); \
 } while (0)
 #define WRITE_MINMAX_CPU(param, value) do { \
-    ALOGV("%s: WRITE_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
+    ALOGD_IF(debug_level > 0, "%s: WRITE_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
     sysfs_write_int(MINMAX_CPU_PATH #param, value); \
 } while(0)
-#else
-#define WRITE_PEGASUSQ_PARAM(profile, param) sysfs_write_int(PEGASUSQ_PATH #param, profiles[profile].param)
-#define WRITE_LOW_POWER_PARAM(profile, param) sysfs_write_int(PEGASUSQ_PATH #param, profiles_low_power[profile].param)
-#define WRITE_PEGASUSQ_VALUE(param, value)   sysfs_write_int(PEGASUSQ_PATH #param, value)
-#define WRITE_DYNAMIC_PARAM(profile, param) sysfs_write_int(DYNAMIC_PATH #param, profiles[profile].param)
-#define WRITE_DYNAMIC_VALUE(param, value)   sysfs_write_int(DYNAMIC_PATH #param, value)
-#define WRITE_MINMAX_CPU(param, value) sysfs_write_int(MINMAX_CPU_PATH #param, value)
-#endif
-
-/*
-static bool check_governor_pegasusq() {
-    struct stat s;
-    int err = stat(PEGASUSQ_PATH, &s);
-    if (err != 0) return false;
-    return S_ISDIR(s.st_mode);
-}*/
+#define READ_MINMAX_CPU(param, value) do { \
+    value = sysfs_read_int(MINMAX_CPU_PATH #param); \
+    ALOGD_IF(debug_level > 0, "%s: READ_MINMAX_CPU(param=%s, value=%d)", __func__, #param, value); \
+} while(0)
 
 static bool check_governor_dynamic() {
     struct stat s;
@@ -200,24 +178,26 @@ static void set_power_profile(int profile) {
     ALOGE("%s: %d", __func__, profile);
 
     if (!is_profile_valid(profile)) {
-        ALOGE("%s: unknown profile: %d", __func__, profile);
+        ALOGD_IF(debug_level > 0, "%s: unknown profile: %d", __func__, profile);
         return;
     }
 
     if (profile == current_power_profile) return;
 
-    WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[profile].max_freq);
-    WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[profile].min_freq);
+    //WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[profile].max_freq);
+    //WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[profile].min_freq);
 
     if (check_governor_dynamic()) {
-        WRITE_DYNAMIC_PARAM(profile, hotplug_freq_1_1);
-        WRITE_DYNAMIC_PARAM(profile, hotplug_freq_2_0);
-        WRITE_DYNAMIC_PARAM(profile, hotplug_rq_1_1);
-        WRITE_DYNAMIC_PARAM(profile, hotplug_rq_2_0);
+        //WRITE_DYNAMIC_PARAM(profile, hotplug_freq_1_1);
+        //WRITE_DYNAMIC_PARAM(profile, hotplug_freq_2_0);
+        //WRITE_DYNAMIC_PARAM(profile, hotplug_rq_1_1);
+        //WRITE_DYNAMIC_PARAM(profile, hotplug_rq_2_0);
         WRITE_DYNAMIC_PARAM(profile, up_threshold);
         WRITE_DYNAMIC_PARAM(profile, down_differential);
-        WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);
-        WRITE_DYNAMIC_PARAM(profile, max_cpu_lock);
+        end_boost();
+        READ_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
+        //WRITE_DYNAMIC_PARAM(profile, min_cpu_lock);
+        //WRITE_DYNAMIC_PARAM(profile, max_cpu_lock);
         WRITE_DYNAMIC_PARAM(profile, cpu_up_rate);
         WRITE_DYNAMIC_PARAM(profile, cpu_down_rate);
         WRITE_DYNAMIC_PARAM(profile, sampling_rate);
@@ -239,38 +219,30 @@ static void set_power_profile(int profile) {
 
     current_power_profile = profile;
 
-    if (DEBUG) ALOGV("%s: %d", __func__, profile);
+    ALOGD_IF(debug_level > 2, "%s: %d", __func__, profile);
 }
 
 static void boost(long boost_time __unused, bool boost_minfreq) {
     (void)boost_minfreq;
-    if (current_power_profile == PROFILE_POWER_SAVE) {
-        WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[PROFILE_PERFORMANCE].max_freq);
-        /*if (boost_minfreq)
-            WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[PROFILE_PERFORMANCE].max_freq);
-        else
-            WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].boost_freq);*/
-    }
+    READ_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
+    WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[PROFILE_PERFORMANCE].max_freq);
 }
 
 static void end_boost() {
-    if (current_power_profile == PROFILE_POWER_SAVE) {
-        //WRITE_MINMAX_CPU(cpufreq_max_limit, profiles[current_power_profile].max_freq);
-        WRITE_MINMAX_CPU(cpufreq_min_limit, profiles[current_power_profile].min_freq);
-    }
+    WRITE_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
 }
 
 static void set_power(bool low_power) {
     if (!is_profile_valid(current_power_profile)) {
-        if (DEBUG) ALOGV("%s: current_power_profile not set yet", __func__);
+        ALOGD_IF(debug_level > 2, "%s: current_power_profile not set yet", __func__);
         return;
     }
 
     if (is_low_power == low_power) return;
 
     if (low_power) {
-        set_power_profile(PROFILE_POWER_SAVE);
         end_boost();
+        set_power_profile(PROFILE_POWER_SAVE);
         is_low_power = true;
     } else {
         set_power_profile(PROFILE_BALANCED);
@@ -287,8 +259,9 @@ static void set_power(bool low_power) {
  * PowerManagerService.
  */
 void power_init(void) {
+    READ_MINMAX_CPU(cpufreq_max_limit, current_cpufreq_limit);
     set_power_profile(PROFILE_BALANCED);
-    if (DEBUG) ALOGV("%s", __func__);
+    ALOGD_IF(debug_level > 2, "%s", __func__);
 }
 
 /*
@@ -316,11 +289,11 @@ void power_init(void) {
  */
 void power_set_interactive(int on) {
     if (!is_profile_valid(current_power_profile)) {
-        ALOGD("%s: no power profile selected", __func__);
+        ALOGD_IF(debug_level > 0, "%s: no power profile selected", __func__);
         return;
     }
 
-    if (DEBUG) ALOGV("%s: setting interactive => %d", __func__, on);
+    ALOGD_IF(debug_level > 2, "%s: setting interactive => %d", __func__, on);
     set_power(!on);
 }
 
@@ -364,7 +337,7 @@ void power_hint(power_hint_t hint, void *data) {
     int32_t val;
 
     if (hint == POWER_HINT_SET_PROFILE) {
-        if (DEBUG) ALOGV("%s: set profile %d", __func__, *(int32_t *)data);
+        ALOGD_IF(debug_level > 2, "%s: set profile %d", __func__, *(int32_t *)data);
         if (is_vsync_active) {
             is_vsync_active = false;
             end_boost();
@@ -378,7 +351,7 @@ void power_hint(power_hint_t hint, void *data) {
     switch (hint) {
         case POWER_HINT_INTERACTION:
             if (data) {
-                if (DEBUG) ALOGV("%s: interaction", __func__);
+                ALOGD_IF(debug_level > 2, "%s: interaction", __func__);
                 val = *(int32_t *)data;
                 if (val > 0) {
                     boost(val * US_TO_NS, false);
@@ -388,11 +361,11 @@ void power_hint(power_hint_t hint, void *data) {
             }
             break;
         case POWER_HINT_LAUNCH:
-            if (DEBUG) ALOGV("%s: launch", __func__);
+            ALOGD_IF(debug_level > 2, "%s: launch", __func__);
             boost(profiles[current_power_profile].launch_boost_time, true);
             break;
         case POWER_HINT_CPU_BOOST:
-            if (DEBUG) ALOGV("%s: cpu_boost", __func__);
+            ALOGD_IF(debug_level > 2, "%s: cpu_boost", __func__);
             boost((*(int32_t *)data) * US_TO_NS, false);
             break;
         default:
