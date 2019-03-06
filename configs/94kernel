@@ -112,36 +112,5 @@ echo 1 > /sys/module/leds_an30259a/parameters/led_switch
 # this line was moved to /vendor/etc/pm_tweaks.rc
 #echo 800000 > /sys/power/cpufreq_max_limit
 
-# Swappiness
-echo 60 > /proc/sys/vm/swappiness
-
-# zRAM
-SIZE=300
-
-# don't touch lines below
-#-------------------------------------------------------
-change_zram_size() {
-	swapoff /dev/block/zram0
-	echo 1 > /sys/devices/virtual/block/zram0/reset
-	echo $(( $SIZE * 1024 * 1024 )) > /sys/devices/virtual/block/zram0/disksize
-	mkswap /dev/block/zram0
-	swapon /dev/block/zram0
-}
-sleep 10 && change_zram_size &
-#--------------------------------------------------------
-
-# LowMemoryKiller
-ADJ="0,3,6,10,13,15"
-MINFREE="10120,14280,18244,28000,32000,35000"
-
 echo "com.android.systemui,com.android.phone" > /sys/module/lowmemorykiller/parameters/donotkill_proc_names
 echo 1 > /sys/module/lowmemorykiller/parameters/donotkill_proc
-
-#---------------------------------------------------------
-chmod 0644 /sys/module/lowmemorykiller/parameters/minfree
-chmod 0644 /sys/module/lowmemorykiller/parameters/adj
-#echo $ADJ > /sys/module/lowmemorykiller/parameters/adj
-#echo $MINFREE > /sys/module/lowmemorykiller/parameters/minfree
-#chmod 0444 /sys/module/lowmemorykiller/parameters/adj
-#chmod 0444 /sys/module/lowmemorykiller/parameters/minfree
-#-----------------------------------------------------------
