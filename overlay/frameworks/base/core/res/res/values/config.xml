@@ -214,4 +214,7 @@
 
     <!-- Keep chosen default camera app pinned in memory for faster launching -->
     <bool name="config_pinnerCameraApp">true</bool>
+
+    <!-- Keep home app pinned in memory for faster launching -->
+    <bool name="config_pinnerHomeApp">true</bool>
 </resources>
