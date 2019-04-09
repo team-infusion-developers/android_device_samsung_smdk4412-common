@@ -111,6 +111,10 @@ PRODUCT_PACKAGES += \
     libsuspend-shim \
     libC
 
+# USB
+PRODUCT_PACKAGES += \
+    android.hardware.usb@1.0-service.basic
+
 # SamsungPowerHAL
 PRODUCT_PACKAGES += \
     android.hardware.power@1.0-service.exynos4
