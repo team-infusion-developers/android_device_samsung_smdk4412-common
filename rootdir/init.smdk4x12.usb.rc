@@ -25,7 +25,6 @@ on property:sys.usb.config=mtp,adb
     write /sys/class/android_usb/android0/enable 1
     start adbd
     setprop sys.usb.state ${sys.usb.config}
-    exec u:r:usbreset:s0 -- /system/bin/sh /system/bin/usbreset.sh
 
 on property:sys.usb.config=rndis
     write /sys/class/android_usb/android0/enable 0

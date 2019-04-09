@@ -46,10 +46,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
 
-# MTP fix for buggy hosts
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/usbreset.sh:system/bin/usbreset.sh
-
 # Legacy GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl \
