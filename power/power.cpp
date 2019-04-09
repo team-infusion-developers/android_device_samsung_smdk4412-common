@@ -1,3 +1,4 @@
+#pragma clang diagnostic ignored "-Wwritable-strings"
 /*
  * Copyright (C) 2012 The Android Open Source Project
  * Copyright (C) 2014 The CyanogenMod Project
