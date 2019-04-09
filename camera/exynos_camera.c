@@ -1747,28 +1747,24 @@ void *exynos_camera_capture_thread(void *data)
 	exynos_camera = (struct exynos_camera *) data;
 
 	ALOGE("%s: Starting thread", __func__);
+	int i = 0;
+	for (i = 0; i < 1000; i++) {
+		/*
+		 * We probably can put some condition here to break early,
+		 * but for now just let leave it like that
+		 */
+		usleep(100);
+	}
 	exynos_camera->capture_thread_running = 1;
+	pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
 
 	while (exynos_camera->capture_thread_enabled) {
-		pthread_mutex_lock(&exynos_camera->capture_lock_mutex);
-
 		while (exynos_camera->capture_enabled) {
-			pthread_mutex_lock(&exynos_camera->capture_mutex);
-
-			if (!exynos_camera->capture_enabled) {
-				pthread_mutex_unlock(&exynos_camera->capture_mutex);
-				break;
-			}
-
 			rc = exynos_camera_capture(exynos_camera);
 			if (rc < 0) {
 				ALOGE("%s: Unable to capture", __func__);
-				pthread_mutex_unlock(&exynos_camera->capture_mutex);
 				break;
 			}
-
-			pthread_mutex_unlock(&exynos_camera->capture_mutex);
-
 			// Wait a bit to let others lock the mutex if they need to
 			usleep(10);
 		}
@@ -2207,6 +2203,7 @@ void exynos_camera_capture_stop(struct exynos_camera *exynos_camera)
 		exynos_exif_stop(exynos_camera, &exynos_camera->exif);
 
 	exynos_camera->capture_enabled = 0;
+	exynos_camera_capture_thread_stop(exynos_camera);
 }
 
 int exynos_camera_capture_setup(struct exynos_camera *exynos_camera)
@@ -2427,6 +2424,7 @@ int exynos_camera_preview_start(struct exynos_camera *exynos_camera)
 		return -1;
 	}
 
+	exynos_camera_capture_thread_start(exynos_camera);
 	exynos_camera_capture_setup(exynos_camera);
 
 	exynos_camera->preview_enabled = 1;
@@ -3385,6 +3383,7 @@ int exynos_camera_start_preview(struct camera_device *dev)
 		return -EINVAL;
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
+	usleep(1000);
 
 	exynos_camera->callback_lock = 1;
 	rc = exynos_camera_preview_start(exynos_camera);
@@ -3800,12 +3799,6 @@ int exynos_camera_open(const struct hw_module_t* module, const char *camera_id,
 	rc = exynos_camera_start(exynos_camera, id);
 	if (rc < 0) {
 		ALOGE("%s: Unable to start camera", __func__);
-		goto error;
-	}
-
-	rc = exynos_camera_capture_thread_start(exynos_camera);
-	if (rc < 0) {
-		ALOGE("%s: Unable to start capture thread", __func__);
 		goto error;
 	}
 
