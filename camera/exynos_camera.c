@@ -3383,7 +3383,7 @@ int exynos_camera_start_preview(struct camera_device *dev)
 		return -EINVAL;
 
 	exynos_camera = (struct exynos_camera *) dev->priv;
-	usleep(1000);
+	usleep(100);
 
 	exynos_camera->callback_lock = 1;
 	rc = exynos_camera_preview_start(exynos_camera);
