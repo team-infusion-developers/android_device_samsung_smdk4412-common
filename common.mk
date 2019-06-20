@@ -46,6 +46,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/80cfw:system/etc/init.d/80cfw
 
+# logd hack
+PRODUCT_COPY_FILES += \
+    $(COMMON_PATH)/configs/10hack:system/etc/init.d/10hack
+
 # Legacy GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl \

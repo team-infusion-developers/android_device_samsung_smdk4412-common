@@ -1,0 +1,14 @@
+#!/system/bin/sh
+#
+# Very dirty hack to fix high CPU usage caused by logd
+#
+
+# Restart logd each 10 minutes
+RESTART_THRESHOLD=6000
+
+while true
+do
+    sleep $RESTART_THRESHOLD
+    stop logd
+    start logd
+done
