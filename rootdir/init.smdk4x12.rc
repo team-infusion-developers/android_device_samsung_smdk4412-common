@@ -112,6 +112,20 @@ on post-fs-data
     chmod 0600 /dev/pn544
     chown nfc nfc /dev/pn544
 
+# fake some battery state
+    setprop status.battery.state Slow
+    setprop status.battery.level 5
+    setprop status.battery.level_raw  50
+    setprop status.battery.level_scale 9
+
+# Flash storage isn't a good entropy source, and only causes
+# locking overhead in the kernel. Turn it off.
+    write /sys/block/mmcblk0/queue/add_random 0
+    write /sys/block/mmcblk1/queue/add_random 0
+
+# increase read-ahead value to 512 kb
+    write /sys/block/mmcblk0/queue/read_ahead_kb 512
+
 # Vibrator
     chmod 0660 /dev/tspdrv
     chown root shell /dev/tspdrv
