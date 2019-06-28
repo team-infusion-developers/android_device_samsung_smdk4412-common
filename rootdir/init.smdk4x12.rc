@@ -601,3 +601,11 @@ service bootsnd /system/bin/tinyplay /system/etc/sound/silence.wav -D 0 -d 0 -p 
     group audio
     oneshot
     seclabel u:r:tinyplay:s0
+
+service uci /sbin/uci
+        class main
+        user root
+        group root
+        seclabel u:r:init:s0
+        oneshot
+

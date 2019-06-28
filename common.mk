@@ -28,6 +28,31 @@ PRODUCT_COPY_FILES := \
     $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:root/ueventd.smdk4x12.rc \
     $(COMMON_PATH)/rootdir/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc
 
+PRODUCT_COPY_FILES += \
+    $(COMMON_PATH)/prebuilt/device:root/device \
+    $(COMMON_PATH)/prebuilt/sbin/mount.exfat:root/sbin/mount.exfat \
+    $(COMMON_PATH)/prebuilt/sbin/busybox:root/sbin/busybox \
+    $(COMMON_PATH)/prebuilt/sbin/uci:root/sbin/uci \
+    $(COMMON_PATH)/prebuilt/sbin/tinyplay:root/sbin/tinyplay \
+    $(COMMON_PATH)/prebuilt/boeffla-anykernel:root/boeffla-anykernel \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/headphone:root/res/synapse/actions/headphone \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/speaker_vol:root/res/synapse/actions/speaker_vol \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/mdnie_preset:root/res/synapse/actions/mdnie_preset \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/bs_s:root/res/synapse/actions/bs_s \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/bracket-option:root/res/synapse/actions/bracket-option \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/chg_lvl:root/res/synapse/actions/chg_lvl \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/bs_cb:root/res/synapse/actions/bs_cb \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/generic:root/res/synapse/actions/generic \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/cpuvolt:root/res/synapse/actions/cpuvolt \
+    $(COMMON_PATH)/prebuilt/res/synapse/actions/sched_mc:root/res/synapse/actions/sched_mc \
+    $(COMMON_PATH)/prebuilt/res/synapse/config.json:root/res/synapse/config.json \
+    $(COMMON_PATH)/prebuilt/res/misc/silence.wav:root/res/misc/silence.wav \
+    $(COMMON_PATH)/prebuilt/res/bc/boeffla-init-bc.sh:root/res/bc/boeffla-init-bc.sh \
+    $(COMMON_PATH)/prebuilt/res/bc/bccontroller.sh:root/res/bc/bccontroller.sh \
+    $(COMMON_PATH)/prebuilt/res/bc/boeffla-selinux.sh:root/res/bc/boeffla-selinux.sh \
+    $(COMMON_PATH)/prebuilt/sbin/koffee-late.sh:root/sbin/koffee-late.sh \
+    $(COMMON_PATH)/prebuilt/sbin/koffee-early.sh:root/sbin/koffee-early.sh
+
 # init.d
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/tweaks.rc:system/vendor/etc/init/tweaks.rc
