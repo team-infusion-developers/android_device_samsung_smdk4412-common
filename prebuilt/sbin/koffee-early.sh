@@ -18,7 +18,7 @@
 
 /sbin/busybox echo "1" > /sys/block/zram1/reset
 /sbin/busybox echo "lzo" > /sys/block/zram1/comp_algorithm
-/sbin/busybox echo "419430400" > /sys/block/zram1/disksize
+/sbin/busybox echo "209715200" > /sys/block/zram1/disksize
 /sbin/busybox mkswap /dev/block/zram1
 /sbin/busybox swapon /dev/block/zram1
 /sbin/busybox echo "100" > /proc/sys/vm/swappiness
