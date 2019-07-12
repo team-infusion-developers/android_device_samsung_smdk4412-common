@@ -69,6 +69,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/gps.conf:system/etc/gps.conf
 
+# Battery
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.config.small_battery=true
 
 # Packages
 PRODUCT_PACKAGES += \
