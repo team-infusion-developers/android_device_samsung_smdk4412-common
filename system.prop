@@ -9,3 +9,6 @@ ro.lcd_min_brightness=20
 
 # EGL blobs crash on screen off
 ro.egl.destroy_after_detach=true
+
+# Force OpenGL
+debug.hwui.renderer=opengl
