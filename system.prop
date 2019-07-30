@@ -12,3 +12,7 @@ ro.egl.destroy_after_detach=true
 
 # Force OpenGL
 debug.hwui.renderer=opengl
+
+# dex2oat space-profile
+dalvik.vm.image-dex2oat-filter=space-profile
+dalvik.vm.dex2oat-filter=space-profile

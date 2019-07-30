@@ -30,8 +30,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
      pm.dexopt.downgrade_after_inactive_days=10
 
 
-# Speed profile services and wifi-service to reduce RAM and storage.
-PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed-profile
+# Space profile services and wifi-service to reduce RAM and storage.
+PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := space-profile
 
 # Always preopt extracted APKs to prevent extracting out of the APK for gms
 # modules.
