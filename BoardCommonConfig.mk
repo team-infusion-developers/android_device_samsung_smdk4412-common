@@ -1,4 +1,4 @@
-#
+﻿#
 # Copyright (C) 2012 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -188,7 +188,7 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
 BOARD_CHARGER_SHOW_PERCENTAGE := true
 
 # Use release-keys to sign the build
-BUILD_KEYS := release-keys
+BUILD_KEYS := test-keys
 
 ifeq ($(BUILD_KEYS),release-keys)
 PRODUCT_DEFAULT_DEV_CERTIFICATE := .android-certs/releasekey
@@ -196,3 +196,7 @@ endif
 
 # inherit from the proprietary version
 -include vendor/samsung/smdk4412-common/BoardConfigVendor.mk
+
+# GPS Text Relocation Workaround
+TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
+
