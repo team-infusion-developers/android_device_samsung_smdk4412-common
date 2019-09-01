@@ -274,3 +274,7 @@
         <version>1.0</version>
         <interface>
             <name>IUsb</name>
+            <instance>default</instance>
+        </interface>
+     </hal>
+</manifest>
