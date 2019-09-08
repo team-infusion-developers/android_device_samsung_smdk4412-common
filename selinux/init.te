@@ -5,7 +5,6 @@ allow init debugfs:dir mounton;
 allow init sysfs_bluetooth_writable:file setattr;
 allow init sysfs_display:file { open setattr write };
 allow init sysfs_radio:file setattr;
-allow init sysfs_gps:file rw_file_perms;
 #allow init system_file:file execute_no_trans;
 allow init proc:file { open write };
 allow init sysfs:file { open read setattr write };
