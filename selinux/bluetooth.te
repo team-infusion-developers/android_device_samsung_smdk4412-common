@@ -1,4 +1,6 @@
-allow bluetooth efs_device_file:dir search;
-allow bluetooth storage_stub_file:dir getattr;
-#allow bluetooth method_trace_data_file:file { execute read unlink };
-allow bluetooth method_trace_data_file:file { read unlink };
+allow bluetooth bluetooth_data_file:file { read open };
+allow bluetooth serial_device:chr_file { read write ioctl open };
+allow bluetooth wifi_data_file:file { read open };
+allow bluetooth radio_device:file write;
+allow bluetooth sysfs_bluetooth_writable:dir search;
+allow bluetooth sysfs_bluetooth_writable:lnk_file read;

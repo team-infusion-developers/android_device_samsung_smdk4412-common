@@ -1,4 +1,4 @@
-allow audioserver system_file:file execmod;
-allow audioserver rild:unix_stream_socket connectto;
-allow audioserver sysfs_cpuinfo:dir search;
-allow audioserver sysfs_cpuinfo:file { getattr open read };
+allow audioserver qmuxd:unix_stream_socket connectto;
+allow audioserver self:socket create;
+allow audioserver socket_device:dir { write add_name };
+allow audioserver socket_device:sock_file { write create setattr };
