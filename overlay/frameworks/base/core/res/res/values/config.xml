@@ -192,33 +192,17 @@
         <item>SUPL_HOST=supl.google.com</item>
         <item>SUPL_PORT=7276</item>
         <item>SUPL_MODE=1</item>
+        <item>SUPL_VER=0x10000</item>
+        <item>SUPL_ES=1</item>
+        <item>USE_EMERGENCY_PDN_FOR_EMERGENCY_SUPL=1</item>
+        <item>GPS_LOCK=0</item>
+        <item>A_GLONASS_POS_PROTOCOL_SELECT=15</item>
+        <item>XTRA_SERVER_1=https://gllto.glpals.com/7day/glo/v2/latest/lto2.dat</item>
+        <item>XTRA_SERVER_2=https://xtra1.gpsonextra.net/xtra.bin</item>
+        <item>XTRA_SERVER_3=https://gllto.glpals.com/30day/v2/latest/lto2.dat</item>
    </string-array>
-
-    <!-- Default list of files pinned by the Pinner Service -->
-    <string-array translatable="false" name="config_defaultPinnerServiceFiles">
-        <!-- boot -->
-        <item>"/system/framework/boot.vdex"</item>            <!-- 4.158.376 -->
-        <item>"/system/framework/arm/boot.oat"</item>         <!-- 4.008.336 -->
-
-        <!-- boot-framework -->
-        <item>"/system/framework/boot-framework.vdex"</item>     <!-- 18.893.636 -->
-        <item>"/system/framework/arm/boot-framework.oat"</item>  <!-- 13.060.208 -->
-
-        <!-- services -->
-        <item>"/system/framework/oat/arm/services.odex"</item>   <!-- 20.733.436 -->
-        <item>"/system/framework/oat/arm/services.vdex"</item>   <!--  8.622.988 -->
-
-        <item>"/system/framework/arm/boot-core-libart.oat"</item><!--  1.638.728 -->
-        <item>"/system/framework/boot-core-libart.vdex"</item>   <!--  2.754.164 -->
-    </string-array>
-
-    <!-- Keep chosen default camera app pinned in memory for faster launching -->
-    <bool name="config_pinnerCameraApp">true</bool>
-
-    <!-- Keep home app pinned in memory for faster launching -->
-    <bool name="config_pinnerHomeApp">true</bool>
-
+    
     <!-- Minimum screen brightness setting allowed by the power manager.
          The user is forbidden from setting the brightness below this level. -->
-    <integer name="config_screenBrightnessSettingMinimum">30</integer>
+    <integer name="config_screenBrightnessSettingMinimum">10</integer>
 </resources>

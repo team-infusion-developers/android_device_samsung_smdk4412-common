@@ -188,7 +188,7 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.exynos4
 BOARD_CHARGER_SHOW_PERCENTAGE := true
 
 # Use release-keys to sign the build
-BUILD_KEYS := release-keys
+BUILD_KEYS := test-keys
 
 ifeq ($(BUILD_KEYS),release-keys)
 PRODUCT_DEFAULT_DEV_CERTIFICATE := .android-certs/releasekey

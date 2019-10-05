@@ -53,6 +53,7 @@ PRODUCT_COPY_FILES += \
 # Legacy GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl \
+    android.hardware.gnss@1.0-service \
     gps.smdk4x12
 
 # Wifi
@@ -67,8 +68,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Gps
 PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/gps.conf:system/etc/gps.conf
-
+    $(COMMON_PATH)/configs/gps.conf:system/etc/gps.conf \
+    $(COMMON_PATH)/configs/sirfgps.conf:system/etc/sirfgps.conf \
+    $(COMMON_PATH)/configs/gps_debug.conf:system/etc/gps_debug.conf 
 
 # Packages
 PRODUCT_PACKAGES += \
@@ -166,9 +168,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.qti.sys.fw.trim_empty_percent=50 \
     ro.vendor.qti.sys.fw.trim_cache_percent=100 \
     ro.vendor.qti.sys.fw.empty_app_percent=2
-
-PRODUCT_PACKAGES += \
-    SamsungDoze
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \
